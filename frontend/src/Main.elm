@@ -1,15 +1,9 @@
 module Main exposing (..)
 
--- Press buttons to increment and decrement a counter.
---
--- Read how it works:
---   https://guide.elm-lang.org/architecture/buttons.html
---
-
-
 import Browser
-import Html exposing (Html, button, div, text)
-import Html.Events exposing (onClick)
+import Html exposing (Html, button, div, text, input)
+import Html.Events exposing (onClick, onInput)
+import Html.Attributes exposing (..)
 
 
 
@@ -24,12 +18,17 @@ main =
 -- MODEL
 
 
-type alias Model = Int
+type alias Model = {
+    content : String,
+    count: Int
+  }
 
 
 init : Model
-init =
-  0
+init = {
+    content = "",
+    count = 1
+  }
 
 
 
@@ -39,16 +38,20 @@ init =
 type Msg
   = Increment
   | Decrement
+  | TextUpdate String
 
 
 update : Msg -> Model -> Model
 update msg model =
   case msg of
     Increment ->
-      model + 1
+      { model | count = model.count + 1 }
 
     Decrement ->
-      model - 1
+      { model | count = model.count - 1 }
+
+    TextUpdate newcontent ->
+      { model | content = newcontent }
 
 
 
@@ -58,7 +61,9 @@ update msg model =
 view : Model -> Html Msg
 view model =
   div []
-    [ button [ onClick Decrement ] [ text "-" ]
-    , div [] [ text (String.fromInt model) ]
+    [ input [ placeholder "Enter some text", value model.content, onInput TextUpdate ] []
+    , div [] [ text (model.content)]
+    , button [ onClick Decrement ] [ text "-" ]
+    , div [] [ text (String.fromInt model.count) ]
     , button [ onClick Increment ] [ text "+" ]
     ]

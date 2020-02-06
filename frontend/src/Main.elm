@@ -4,8 +4,11 @@ import Browser
 import Html exposing (Html, button, div, text, input)
 import Html.Events exposing (onClick, onInput)
 import Html.Attributes exposing (..)
-
-
+import Element exposing (Element, el, row, alignRight, fill, width, rgb255, spacing, centerY, padding)
+import Element.Background as Background
+import Element.Border as Border
+import Element.Font as Font
+import Element.Input as Input
 
 -- MAIN
 
@@ -61,9 +64,32 @@ update msg model =
 view : Model -> Html Msg
 view model =
   div []
-    [ input [ placeholder "Enter some text", value model.content, onInput TextUpdate ] []
-    , div [] [ text (model.content)]
-    , button [ onClick Decrement ] [ text "-" ]
-    , div [] [ text (String.fromInt model.count) ]
-    , button [ onClick Increment ] [ text "+" ]
+    [ Element.layout [] (myInput model.content)
+    , Element.layout [] (myCounter model.count)
     ]
+
+myCounter : Int -> Element Msg
+myCounter count = 
+  row []
+    [ Input.button [ padding 30 ]
+        { onPress = Just Decrement
+        , label = Element.text "-"
+        }
+    , el
+        [ Border.rounded 3
+        , padding 30
+        ]
+        (Element.text (String.fromInt count))
+    , Input.button [ padding 30 ]
+        { onPress = Just Increment
+        , label = Element.text "+"
+        }
+    ]
+
+myInput : String -> Element Msg
+myInput content = Input.text []
+  { onChange = TextUpdate 
+  , text = content
+  , placeholder = Just (Input.placeholder [] (Element.text "enter some text"))
+  , label = Input.labelAbove [] (Element.text "")
+  }

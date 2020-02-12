@@ -8,6 +8,8 @@ import Element.Font as Font
 import Element.Input as Input
 import Html exposing (Html)
 import Html.Events exposing (onClick, onInput)
+import Http exposing (stringBody)
+import Json.Encode
 
 
 
@@ -15,7 +17,7 @@ import Html.Events exposing (onClick, onInput)
 
 
 main =
-    Browser.sandbox { init = init, update = update, view = view }
+    Browser.element { init = init, update = update, subscriptions = subscriptions, view = view }
 
 
 
@@ -28,11 +30,9 @@ type alias Model =
     }
 
 
-init : Model
-init =
-    { content = ""
-    , count = 1
-    }
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( { content = "", count = 1 }, Cmd.none )
 
 
 
@@ -43,19 +43,41 @@ type Msg
     = Increment
     | Decrement
     | TextUpdate String
+    | SendPost
+    | GotText (Result Http.Error String)
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Increment ->
-            { model | count = model.count + 1 }
+            ( { model | count = model.count + 1 }, Cmd.none )
 
         Decrement ->
-            { model | count = model.count - 1 }
+            ( { model | count = model.count - 1 }, Cmd.none )
 
         TextUpdate newcontent ->
-            { model | content = newcontent }
+            ( { model | content = newcontent }, Cmd.none )
+
+        SendPost ->
+            ( model, Http.post { url = "testpost", body = stringBody "text/plain" (Json.Encode.encode 0 (Json.Encode.string "hi there this is HTML body")), expect = Http.expectString GotText } )
+
+        GotText result ->
+            case result of
+                Ok fullText ->
+                    ( { model | content = fullText }, Cmd.none )
+
+                Err _ ->
+                    ( { model | content = "FAILUERE" }, Cmd.none )
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
 
 
 
@@ -66,7 +88,20 @@ view : Model -> Html Msg
 view model =
     Element.layout
         [ width fill, height fill ]
-        (column [ centerX, centerY ] [ myInput model.content, myCounter model.count ])
+        (column [ centerX, centerY ]
+            [ myInput model.content
+            , myCounter model.count
+            , postButton
+            ]
+        )
+
+
+postButton : Element Msg
+postButton =
+    Input.button [ padding 30 ]
+        { onPress = Just SendPost
+        , label = Element.text "SEND POST"
+        }
 
 
 myCounter : Int -> Element Msg

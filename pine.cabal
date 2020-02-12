@@ -1,0 +1,23 @@
+name:                pine
+version:             0.1.0.0
+-- synopsis:
+-- description:
+homepage:            https://github.com/githubuser/pine#readme
+license:             MIT
+license-file:        LICENSE
+author:              Brandon Wang, Scott Kim, Thomas Yang 
+maintainer:          scottk3@illinois.edu
+copyright:           2020 Brandon Wang, Scott Kim, Thomas Yang 
+category:            Web
+build-type:          Simple
+cabal-version:       >=1.10
+extra-source-files:  README.md
+
+executable pine
+  hs-source-dirs:      src
+  main-is:             Main.hs
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5,
+                       scotty,
+                       text,
+                       aeson

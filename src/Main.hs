@@ -3,26 +3,13 @@ module Main where
 
 import Web.Scotty
 import GHC.Generics
-import Data.Aeson (FromJSON, ToJSON)
+import Data.Aeson (FromJSON, ToJSON, decode)
+import Data.Text.Lazy (pack)
 import Data.Text.Lazy.Encoding (decodeUtf8)
 import Control.Monad.IO.Class
 
+import Types (CodeSubmission(..), parseJSON)
 
-
-data User = User { userId :: Int, userName :: String } deriving (Show, Generic)
-
-instance ToJSON User
-instance FromJSON User
-
-
-bob :: User
-bob = User { userId = 1, userName = "bob" }
-
-jenny :: User
-jenny = User { userId = 2, userName = "jenny" }
-
-allUsers :: [User]
-allUsers = [bob, jenny]
 
 {-|
  - Things that are easy to understand and are a 5 minute google away:
@@ -46,8 +33,17 @@ main = do
         post "/testpost" $ do
             bodyBytes <- body
             liftIO $ print $ decodeUtf8 bodyBytes
-            text "hey there this is backend reply"
+            text (pack ( show(addCodeSubmission (decode bodyBytes))))
         get "/" $
             file "./frontend/index.html"
 
 
+-- parseJsonAndAdd :: ByteString -> Int
+-- parseJsonAndAdd jsonString = 
+--     addCodeSubmission (decode jsonString)
+
+addCodeSubmission :: Maybe CodeSubmission -> Int
+addCodeSubmission (Just (CodeSubmission num1 num2 _)) =
+    num1 + num2
+addCodeSubmission Nothing =
+    0

@@ -6,6 +6,9 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
+import Generated.Decoder exposing (decodeCodeSubmission)
+import Generated.Encoder exposing (encodeCodeSubmission)
+import Generated.Types exposing (CodeSubmission)
 import Html exposing (Html)
 import Html.Events exposing (onClick, onInput)
 import Http exposing (stringBody)
@@ -17,7 +20,12 @@ import Json.Encode
 
 
 main =
-    Browser.element { init = init, update = update, subscriptions = subscriptions, view = view }
+    Browser.element
+        { init = init
+        , update = update
+        , subscriptions = subscriptions
+        , view = view
+        }
 
 
 
@@ -25,14 +33,22 @@ main =
 
 
 type alias Model =
-    { content : String
-    , count : Int
+    { someCode : String
+    , count1 : Int
+    , count2 : Int
+    , backendReply : String
     }
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { content = "", count = 1 }, Cmd.none )
+    ( { someCode = ""
+      , count1 = 0
+      , count2 = 0
+      , backendReply = ""
+      }
+    , Cmd.none
+    )
 
 
 
@@ -40,35 +56,67 @@ init _ =
 
 
 type Msg
-    = Increment
-    | Decrement
+    = UpdateCount1 String
+    | UpdateCount2 String
     | TextUpdate String
     | SendPost
-    | GotText (Result Http.Error String)
+    | GotReply (Result Http.Error String)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Increment ->
-            ( { model | count = model.count + 1 }, Cmd.none )
+        UpdateCount1 newCount ->
+            if newCount == "" then
+                ( { model | count1 = 0 }, Cmd.none )
 
-        Decrement ->
-            ( { model | count = model.count - 1 }, Cmd.none )
+            else
+                case String.toInt newCount of
+                    Just integer ->
+                        ( { model | count1 = integer }, Cmd.none )
+
+                    Nothing ->
+                        ( model, Cmd.none )
+
+        UpdateCount2 newCount ->
+            if newCount == "" then
+                ( { model | count2 = 0 }, Cmd.none )
+
+            else
+                case String.toInt newCount of
+                    Just integer ->
+                        ( { model | count2 = integer }, Cmd.none )
+
+                    Nothing ->
+                        ( model, Cmd.none )
 
         TextUpdate newcontent ->
-            ( { model | content = newcontent }, Cmd.none )
+            ( { model | someCode = newcontent }, Cmd.none )
 
         SendPost ->
-            ( model, Http.post { url = "testpost", body = stringBody "text/plain" (Json.Encode.encode 0 (Json.Encode.string "hi there this is HTML body")), expect = Http.expectString GotText } )
+            ( model
+            , Http.post
+                { url = "testpost"
+                , body =
+                    Http.jsonBody
+                        (encodeCodeSubmission
+                            (CodeSubmission
+                                model.count1
+                                model.count2
+                                model.someCode
+                            )
+                        )
+                , expect = Http.expectString GotReply
+                }
+            )
 
-        GotText result ->
+        GotReply result ->
             case result of
                 Ok fullText ->
-                    ( { model | content = fullText }, Cmd.none )
+                    ( { model | backendReply = fullText }, Cmd.none )
 
                 Err _ ->
-                    ( { model | content = "FAILUERE" }, Cmd.none )
+                    ( { model | backendReply = "FAILURE" }, Cmd.none )
 
 
 
@@ -89,38 +137,12 @@ view model =
     Element.layout
         [ width fill, height fill ]
         (column [ centerX, centerY ]
-            [ myInput model.content
-            , myCounter model.count
+            [ myInput model.someCode
+            , intInputs model.count1 model.count2
             , postButton
+            , backendOutput model.backendReply
             ]
         )
-
-
-postButton : Element Msg
-postButton =
-    Input.button [ padding 30 ]
-        { onPress = Just SendPost
-        , label = Element.text "SEND POST"
-        }
-
-
-myCounter : Int -> Element Msg
-myCounter count =
-    row []
-        [ Input.button [ padding 30 ]
-            { onPress = Just Decrement
-            , label = Element.text "-"
-            }
-        , el
-            [ Border.rounded 3
-            , padding 30
-            ]
-            (Element.text (String.fromInt count))
-        , Input.button [ padding 30 ]
-            { onPress = Just Increment
-            , label = Element.text "+"
-            }
-        ]
 
 
 myInput : String -> Element Msg
@@ -131,3 +153,38 @@ myInput content =
         , placeholder = Just (Input.placeholder [] (Element.text "enter some text"))
         , label = Input.labelAbove [] (Element.text "")
         }
+
+
+intInputs : Int -> Int -> Element Msg
+intInputs count1 count2 =
+    row
+        [ Border.rounded 3
+        , padding 30
+        ]
+        [ Input.text []
+            { label = Input.labelAbove [] (Element.text "")
+            , onChange = UpdateCount1
+            , placeholder = Just (Input.placeholder [] (Element.text "enter some text"))
+            , text = String.fromInt count1
+            }
+        , Input.text []
+            { onChange = UpdateCount2
+            , text = String.fromInt count2
+            , placeholder = Just (Input.placeholder [] (Element.text "enter some text"))
+            , label = Input.labelAbove [] (Element.text "")
+            }
+        ]
+
+
+postButton : Element Msg
+postButton =
+    Input.button [ padding 30, Border.rounded 3, Border.width 1, centerX ]
+        { onPress = Just SendPost
+        , label = Element.text "SEND POST"
+        }
+
+
+backendOutput : String -> Element Msg
+backendOutput reply =
+    el [ padding 20, width fill ]
+        (paragraph [ padding 20, Border.rounded 3, Border.solid, Border.width 1, width fill ] [ text reply ])

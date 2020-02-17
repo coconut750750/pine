@@ -1,6 +1,7 @@
 module Main exposing (..)
 
 import Browser
+import Browser.Events
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
@@ -9,12 +10,13 @@ import Element.Input as Input
 import Generated.Decoder exposing (decodeCodeSubmission)
 import Generated.Encoder exposing (encodeCodeSubmission)
 import Generated.Types exposing (CodeSubmission)
-import Html exposing (Html)
-import Html.Events exposing (onClick, onInput)
+import Html exposing (Html, div, textarea, input, text)
+import Html.Attributes exposing (style)
+import Html.Events exposing (onClick, onInput, preventDefaultOn)
 import Http exposing (stringBody)
 import Json.Encode
-
-
+import Json.Decode as Decode
+import Debug exposing (log)
 
 -- MAIN
 
@@ -33,7 +35,7 @@ main =
 
 
 type alias Model =
-    { someCode : String
+    { mainCode : String
     , count1 : Int
     , count2 : Int
     , backendReply : String
@@ -42,7 +44,7 @@ type alias Model =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { someCode = ""
+    ( { mainCode = ""
       , count1 = 0
       , count2 = 0
       , backendReply = ""
@@ -61,6 +63,7 @@ type Msg
     | TextUpdate String
     | SendPost
     | GotReply (Result Http.Error String)
+    | TabDown
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -91,7 +94,7 @@ update msg model =
                         ( model, Cmd.none )
 
         TextUpdate newcontent ->
-            ( { model | someCode = newcontent }, Cmd.none )
+            ( { model | mainCode = newcontent }, Cmd.none )
 
         SendPost ->
             ( model
@@ -103,7 +106,7 @@ update msg model =
                             (CodeSubmission
                                 model.count1
                                 model.count2
-                                model.someCode
+                                model.mainCode
                             )
                         )
                 , expect = Http.expectString GotReply
@@ -118,6 +121,9 @@ update msg model =
                 Err _ ->
                     ( { model | backendReply = "FAILURE" }, Cmd.none )
 
+        TabDown ->
+            ( { model | mainCode = model.mainCode ++ "    " }, Cmd.none )
+
 
 
 -- SUBSCRIPTIONS
@@ -128,32 +134,56 @@ subscriptions model =
     Sub.none
 
 
-
 -- VIEW
 
 
 view : Model -> Html Msg
 view model =
-    Element.layout
-        [ width fill, height fill ]
-        (column [ centerX, centerY ]
-            [ myInput model.someCode
-            , intInputs model.count1 model.count2
-            , postButton
-            , backendOutput model.backendReply
-            ]
-        )
+    div [ style "height" "100%" ]
+    [ mainInput [ style "height" "100%", style "width" "50%", style "float" "left" ] model.mainCode
+    , div [ style "width" "50%", style "float" "left" ] 
+      [ Element.layout [ width fill, height fill ]
+          (row [ width fill, height fill ]
+              [ (column [ height fill ]
+                  [ mainOutput [] "asdf"
+                  , intInputs model.count1 model.count2
+                  , postButton
+                  , backendOutput model.backendReply
+                  ]
+              )]
+          )
+      ]
+    ]
+
+mainInput : List (Html.Attribute Msg) -> String -> Html Msg
+mainInput attrs code = 
+  Html.textarea (attrs ++ 
+    [ onInput TextUpdate
+    , onTab TabDown
+    , Html.Attributes.value code 
+  ]) []
 
 
-myInput : String -> Element Msg
-myInput content =
-    Input.text []
-        { onChange = TextUpdate
-        , text = content
-        , placeholder = Just (Input.placeholder [] (Element.text "enter some text"))
-        , label = Input.labelAbove [] (Element.text "")
-        }
+onTab : msg -> Html.Attribute msg
+onTab msg =
+    let _ = Debug.log "onTab" Html.Events.keyCode
+      in
+    let
+        isTabKey keyCode =
+            if keyCode == 9 then
+                Decode.succeed msg
+            else
+                Decode.fail "silent failure :)"
+    in
+    Html.Events.keyCode
+    |> Decode.andThen isTabKey
+    |> Decode.map (\x -> { message = x, stopPropagation = True, preventDefault = True })
+    |> Html.Events.custom "keydown"
+    
 
+mainOutput : List (Attribute Msg) -> String -> Element Msg
+mainOutput attrs output = 
+    Element.el attrs (Element.text output)
 
 intInputs : Int -> Int -> Element Msg
 intInputs count1 count2 =
@@ -187,4 +217,4 @@ postButton =
 backendOutput : String -> Element Msg
 backendOutput reply =
     el [ padding 20, width fill ]
-        (paragraph [ padding 20, Border.rounded 3, Border.solid, Border.width 1, width fill ] [ text reply ])
+        (paragraph [ padding 20, Border.rounded 3, Border.solid, Border.width 1, width fill ] [ Element.text reply ])

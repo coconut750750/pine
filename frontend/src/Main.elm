@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Browser
-import Browser.Events
+import Css exposing (..)
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
@@ -13,6 +13,9 @@ import Generated.Types exposing (CodeSubmission)
 import Html exposing (Html, div, textarea, input, text)
 import Html.Attributes exposing (style)
 import Html.Events exposing (onClick, onInput, preventDefaultOn)
+import Html.Styled.Attributes exposing (css)
+import Html.Styled.Events
+import Html.Styled
 import Http exposing (stringBody)
 import Json.Encode
 import Json.Decode as Decode
@@ -26,7 +29,7 @@ main =
         { init = init
         , update = update
         , subscriptions = subscriptions
-        , view = view
+        , view = view >> Html.Styled.toUnstyled
         }
 
 
@@ -122,7 +125,7 @@ update msg model =
                     ( { model | backendReply = "FAILURE" }, Cmd.none )
 
         TabDown ->
-            ( { model | mainCode = model.mainCode ++ "    " }, Cmd.none )
+            ( { model | mainCode = model.mainCode ++ "  " }, Cmd.none )
 
 
 
@@ -136,50 +139,71 @@ subscriptions model =
 
 -- VIEW
 
+theme : { primary : Css.Color, secondary : Css.Color, text: Css.Color }
+theme =
+    { primary = Css.hex "20252d"
+    , secondary = Css.rgb 250 240 230
+    , text = Css.hex "ffffff"
+    }
 
-view : Model -> Html Msg
+view : Model -> Html.Styled.Html Msg
 view model =
-    div [ style "height" "100%" ]
-    [ mainInput [ style "height" "100%", style "width" "50%", style "float" "left" ] model.mainCode
-    , div [ style "width" "50%", style "float" "left" ] 
-      [ Element.layout [ width fill, height fill ]
-          (row [ width fill, height fill ]
-              [ (column [ height fill ]
-                  [ mainOutput [] "asdf"
-                  , intInputs model.count1 model.count2
-                  , postButton
-                  , backendOutput model.backendReply
-                  ]
-              )]
-          )
-      ]
+    Html.Styled.div [ css [ Css.height (Css.pct 100) ]]
+    [ (mainInput model.mainCode)
+    --, Html.Styled.div [ style "width" "50%", style "float" "left" ] 
+    --  [ Element.layout [ Element.width Element.fill, Element.height Element.fill ]
+    --      (Element.row [ Element.width Element.fill, Element.height Element.fill ]
+    --          [ (Element.column [ Element.height Element.fill ]
+    --              [ mainOutput [] "asdf"
+    --              , intInputs model.count1 model.count2
+    --              , postButton
+    --              , backendOutput model.backendReply
+    --              ]
+    --          )]
+    --      )
+    --  ]
     ]
 
-mainInput : List (Html.Attribute Msg) -> String -> Html Msg
-mainInput attrs code = 
-  Html.textarea (attrs ++ 
-    [ onInput TextUpdate
+mainInput : String -> Html.Styled.Html Msg
+mainInput code = 
+  Html.Styled.textarea 
+    [ Html.Styled.Events.onInput TextUpdate
     , onTab TabDown
-    , Html.Attributes.value code 
-  ]) []
+    , Html.Styled.Attributes.value code 
+    , css 
+      [ fontFamily monospace
+      , fontSize (Css.px 14)
+      , margin (Css.px 0)
+      , border (Css.px 0)
+      , Css.padding (Css.px 0)
+      , Css.minHeight (Css.vh 100)
+      , Css.width (Css.pct 50)
+      , Css.resize Css.none
+      , Css.color theme.text
+      , Css.backgroundColor theme.primary
+      , Css.float left
+      , Css.focus
+        [ outline zero
+        ]
+      ]
+  ] []
 
 
-onTab : msg -> Html.Attribute msg
+onTab : msg -> Html.Styled.Attribute msg
 onTab msg =
-    let _ = Debug.log "onTab" Html.Events.keyCode
-      in
-    let
-        isTabKey keyCode =
-            if keyCode == 9 then
-                Decode.succeed msg
-            else
-                Decode.fail "silent failure :)"
-    in
-    Html.Events.keyCode
-    |> Decode.andThen isTabKey
-    |> Decode.map (\x -> { message = x, stopPropagation = True, preventDefault = True })
-    |> Html.Events.custom "keydown"
-    
+  let _ = Debug.log "onTab" Html.Events.keyCode
+  in
+  let
+    isTabKey keyCode =
+      if keyCode == 9 then
+        Decode.succeed msg
+      else
+        Decode.fail "silent failure :)"
+  in
+  Html.Events.keyCode
+  |> Decode.andThen isTabKey
+  |> Decode.map (\x -> { message = x, stopPropagation = True, preventDefault = True })
+  |> Html.Styled.Events.custom "keydown"
 
 mainOutput : List (Attribute Msg) -> String -> Element Msg
 mainOutput attrs output = 
@@ -187,9 +211,9 @@ mainOutput attrs output =
 
 intInputs : Int -> Int -> Element Msg
 intInputs count1 count2 =
-    row
+    Element.row
         [ Border.rounded 3
-        , padding 30
+        , Element.padding 30
         ]
         [ Input.text []
             { label = Input.labelAbove [] (Element.text "")
@@ -208,7 +232,7 @@ intInputs count1 count2 =
 
 postButton : Element Msg
 postButton =
-    Input.button [ padding 30, Border.rounded 3, Border.width 1, centerX ]
+    Input.button [ Element.padding 30, Border.rounded 3, Border.width 1, centerX ]
         { onPress = Just SendPost
         , label = Element.text "SEND POST"
         }
@@ -216,5 +240,5 @@ postButton =
 
 backendOutput : String -> Element Msg
 backendOutput reply =
-    el [ padding 20, width fill ]
-        (paragraph [ padding 20, Border.rounded 3, Border.solid, Border.width 1, width fill ] [ Element.text reply ])
+    el [ Element.padding 20, Element.width Element.fill ]
+        (paragraph [ Element.padding 20, Border.rounded 3, Border.solid, Border.width 1, Element.width Element.fill ] [ Element.text reply ])

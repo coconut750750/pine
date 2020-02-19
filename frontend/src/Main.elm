@@ -20,6 +20,7 @@ import Http exposing (stringBody)
 import Json.Encode
 import Json.Decode as Decode
 import Debug exposing (log)
+import Utils.CssUtils as CssUtils
 
 -- MAIN
 
@@ -39,6 +40,7 @@ main =
 
 type alias Model =
     { mainCode : String
+    , output : String
     , count1 : Int
     , count2 : Int
     , backendReply : String
@@ -48,6 +50,7 @@ type alias Model =
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( { mainCode = ""
+      , output = "output"
       , count1 = 0
       , count2 = 0
       , backendReply = ""
@@ -107,8 +110,8 @@ update msg model =
                     Http.jsonBody
                         (encodeCodeSubmission
                             (CodeSubmission
-                                model.count1
-                                model.count2
+                                1
+                                2
                                 model.mainCode
                             )
                         )
@@ -139,53 +142,90 @@ subscriptions model =
 
 -- VIEW
 
-theme : { primary : Css.Color, secondary : Css.Color, text: Css.Color }
+theme : { primary : Css.Color, secondary : Css.Color, border: Css.Color, text: Css.Color }
 theme =
     { primary = Css.hex "20252d"
-    , secondary = Css.rgb 250 240 230
+    , secondary = Css.hex "1c2027"
+    , border = Css.rgb 100 100 120
     , text = Css.hex "ffffff"
     }
 
 view : Model -> Html.Styled.Html Msg
 view model =
     Html.Styled.div [ css [ Css.height (Css.pct 100) ]]
-    [ (mainInput model.mainCode)
-    --, Html.Styled.div [ style "width" "50%", style "float" "left" ] 
-    --  [ Element.layout [ Element.width Element.fill, Element.height Element.fill ]
-    --      (Element.row [ Element.width Element.fill, Element.height Element.fill ]
-    --          [ (Element.column [ Element.height Element.fill ]
-    --              [ mainOutput [] "asdf"
-    --              , intInputs model.count1 model.count2
-    --              , postButton
-    --              , backendOutput model.backendReply
-    --              ]
-    --          )]
-    --      )
-    --  ]
+    [ Html.Styled.div [ 
+        css [ Css.minHeight (Css.vh 10)
+              , Css.width (Css.vw 100)
+              , Css.float left
+            ]
+        ] 
+        [ ( mainHeader [] (Css.vh 10) )
+        ]
+    , Html.Styled.div [ 
+        css [ Css.minHeight (Css.vh 90)
+              , Css.width (Css.vw 50)
+              , Css.float left
+            ]
+        ] 
+        [ ( mainInput [ Css.minHeight (Css.vh 90) ] model.mainCode )
+        ]
+    , Html.Styled.div [ 
+        css [ Css.minHeight (Css.vh 90)
+              , Css.width (Css.vw 50)
+              , Css.float left
+            ]
+        ] 
+        [ ( mainOutput [ Css.minHeight (Css.vh 90) ] model.backendReply )
+        ]
     ]
 
-mainInput : String -> Html.Styled.Html Msg
-mainInput code = 
+mainHeader : List (Css.Style) -> Css.Calc val -> Html.Styled.Html Msg
+mainHeader attrs height =
+  let
+    borderSize = (Css.px 0.25)
+    heightSize = CssUtils.calcDimension height (Css.px 0) borderSize
+  in
+  Html.Styled.div [
+    css ([ Css.backgroundColor theme.secondary 
+         , Css.minHeight heightSize
+         , border (Css.px 0)
+         , borderBottom3 borderSize Css.solid theme.border
+         ] ++ attrs)
+    ]
+    [
+      Html.Styled.button 
+        [ Html.Styled.Events.onClick SendPost
+        ]
+        [ 
+        ]
+    ]
+
+mainInput : List (Css.Style) ->  String -> Html.Styled.Html Msg
+mainInput attrs code = 
+  let
+    paddingSize = (Css.px 2)
+    borderSize = (Css.px 0.125)
+    widthSize = CssUtils.calcDimension (Css.pct 100) paddingSize borderSize
+  in
   Html.Styled.textarea 
     [ Html.Styled.Events.onInput TextUpdate
     , onTab TabDown
     , Html.Styled.Attributes.value code 
     , css 
-      [ fontFamily monospace
-      , fontSize (Css.px 14)
-      , margin (Css.px 0)
-      , border (Css.px 0)
-      , Css.padding (Css.px 0)
-      , Css.minHeight (Css.vh 100)
-      , Css.width (Css.pct 50)
-      , Css.resize Css.none
-      , Css.color theme.text
-      , Css.backgroundColor theme.primary
-      , Css.float left
-      , Css.focus
-        [ outline zero
-        ]
-      ]
+      ([ fontFamily monospace
+       , fontSize (Css.pct 100)
+       , margin (Css.px 0)
+       , border (Css.px 0)
+       , borderRight3 borderSize Css.solid theme.border
+       , Css.width widthSize
+       , Css.padding paddingSize
+       , Css.resize Css.none
+       , Css.color theme.text
+       , Css.backgroundColor theme.primary
+       , Css.focus 
+         [ outline zero
+         ]
+       ] ++ attrs)
   ] []
 
 
@@ -205,9 +245,29 @@ onTab msg =
   |> Decode.map (\x -> { message = x, stopPropagation = True, preventDefault = True })
   |> Html.Styled.Events.custom "keydown"
 
-mainOutput : List (Attribute Msg) -> String -> Element Msg
+mainOutput : List (Css.Style) -> String -> Html.Styled.Html Msg
 mainOutput attrs output = 
-    Element.el attrs (Element.text output)
+  let
+    paddingSize = (Css.px 2)
+    borderSize = (Css.px 0.125)
+    widthSize = CssUtils.calcDimension (Css.pct 100) paddingSize borderSize
+  in
+  Html.Styled.p
+    [ css
+      ([ fontFamily monospace
+        , fontSize (Css.px 14)
+        , Css.width widthSize
+        , Css.padding paddingSize
+        , Css.margin (Css.px 0)
+        , border (Css.px 0)
+        , borderRight3 borderSize Css.solid theme.border
+        , Css.backgroundColor theme.primary
+        , Css.color theme.text
+        ] ++ attrs)
+    ]
+    [Html.Styled.text output]
+
+--mainRepl : 
 
 intInputs : Int -> Int -> Element Msg
 intInputs count1 count2 =
@@ -228,17 +288,3 @@ intInputs count1 count2 =
             , label = Input.labelAbove [] (Element.text "")
             }
         ]
-
-
-postButton : Element Msg
-postButton =
-    Input.button [ Element.padding 30, Border.rounded 3, Border.width 1, centerX ]
-        { onPress = Just SendPost
-        , label = Element.text "SEND POST"
-        }
-
-
-backendOutput : String -> Element Msg
-backendOutput reply =
-    el [ Element.padding 20, Element.width Element.fill ]
-        (paragraph [ Element.padding 20, Border.rounded 3, Border.solid, Border.width 1, Element.width Element.fill ] [ Element.text reply ])

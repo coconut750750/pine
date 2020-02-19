@@ -4,9 +4,10 @@ module Main where
 import Web.Scotty
 import GHC.Generics
 import Data.Aeson (FromJSON, ToJSON, decode)
-import Data.Text.Lazy (pack)
+import Data.Text.Lazy (pack, Text)
 import Data.Text.Lazy.Encoding (decodeUtf8)
 import Control.Monad.IO.Class
+import Language.Haskell.Interpreter hiding (get)
 
 import Types (CodeSubmission(..), parseJSON)
 
@@ -23,6 +24,13 @@ import Types (CodeSubmission(..), parseJSON)
  - Things that we may never know why but work:
  -      liftIO
 -}
+evaluateStr :: String -> IO Text
+evaluateStr haskellStr = do
+    r <- runInterpreter $ setImports ["Prelude"] >> eval haskellStr
+    case r of
+        Left err -> return $ pack (show err)
+        Right str -> return $ pack (str)
+        
 
 main = do
     putStrLn "Starting Server..."
@@ -32,8 +40,8 @@ main = do
             text ("hello " <> name <> "!")
         post "/testpost" $ do
             bodyBytes <- body
-            liftIO $ print $ decodeUtf8 bodyBytes
-            text (pack ( show(addCodeSubmission (decode bodyBytes))))
+            liftAndCatchIO $ evaluateStr $ show $ decodeUtf8 bodyBytes
+            -- text (pack ( show(addCodeSubmission (decode bodyBytes))))
         get "/" $
             file "./frontend/index.html"
 

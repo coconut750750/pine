@@ -4,6 +4,7 @@ import Browser
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
+import Element.Events as Event exposing (on)
 import Element.Font as Font
 import Element.Input as Input
 import Generated.Decoder exposing (decodeCodeSubmission)

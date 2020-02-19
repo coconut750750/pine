@@ -2,6 +2,7 @@ module Main exposing (..)
 
 import Browser
 import Css exposing (..)
+import Css.Global exposing (..)
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
@@ -139,8 +140,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.none
 
-
--- VIEW
+-- Style
 
 theme : { primary : Css.Color, secondary : Css.Color, border: Css.Color, text: Css.Color }
 theme =
@@ -150,40 +150,59 @@ theme =
     , text = Css.hex "ffffff"
     }
 
+
+-- VIEW
+
 view : Model -> Html.Styled.Html Msg
 view model =
-    Html.Styled.div [ css [ Css.height (Css.pct 100) ]]
-    [ Html.Styled.div [ 
-        css [ Css.minHeight (Css.vh 10)
-              , Css.width (Css.vw 100)
-              , Css.float left
-            ]
-        ] 
-        [ ( mainHeader [] (Css.vh 10) )
+  let
+    headerHeight = Css.vh 10
+    replHeight = Css.calc (Css.vh 100) Css.minus headerHeight
+  in
+  Html.Styled.div [ css [ Css.height (Css.pct 100) ]]
+  [ global 
+    [ class "repl"
+      [ fontFamily monospace
+      , fontSize (Css.px 14)
+      , margin (Css.px 0)
+      , Css.color theme.text
+      , Css.backgroundColor theme.primary
+      , Css.focus 
+        [ outline zero
         ]
-    , Html.Styled.div [ 
-        css [ Css.minHeight (Css.vh 90)
-              , Css.width (Css.vw 50)
-              , Css.float left
-            ]
-        ] 
-        [ ( mainInput [ Css.minHeight (Css.vh 90) ] model.mainCode )
-        ]
-    , Html.Styled.div [ 
-        css [ Css.minHeight (Css.vh 90)
-              , Css.width (Css.vw 50)
-              , Css.float left
-            ]
-        ] 
-        [ ( mainOutput [ Css.minHeight (Css.vh 90) ] model.backendReply )
-        ]
+      ]
     ]
+  , Html.Styled.div [ 
+    css [ Css.height headerHeight
+          , Css.width (Css.vw 100)
+          , Css.float left
+        ]
+    ] 
+    [ mainHeader []
+    ]
+  , Html.Styled.div [ 
+    css [ Css.height replHeight
+          , Css.width (Css.vw 50)
+          , Css.float left
+        ]
+    ] 
+    [ mainInput [] model.mainCode
+    ]
+  , Html.Styled.div [ 
+    css [ Css.height replHeight
+          , Css.width (Css.vw 50)
+          , Css.float left
+        ]
+    ] 
+    [ mainOutput [] model.backendReply
+    ]
+  ]
 
-mainHeader : List (Css.Style) -> Css.Calc val -> Html.Styled.Html Msg
-mainHeader attrs height =
+mainHeader : List (Css.Style) -> Html.Styled.Html Msg
+mainHeader attrs =
   let
     borderSize = (Css.px 0.25)
-    heightSize = CssUtils.calcDimension height (Css.px 0) borderSize
+    heightSize = CssUtils.calcDimension (Css.pct 100) (Css.px 0) borderSize
   in
   Html.Styled.div [
     css ([ Css.backgroundColor theme.secondary 
@@ -196,35 +215,30 @@ mainHeader attrs height =
       Html.Styled.button 
         [ Html.Styled.Events.onClick SendPost
         ]
-        [ 
-        ]
+        [ ]
     ]
 
 mainInput : List (Css.Style) ->  String -> Html.Styled.Html Msg
 mainInput attrs code = 
   let
-    paddingSize = (Css.px 2)
-    borderSize = (Css.px 0.125)
+    paddingSize = Css.px 2
+    borderSize = Css.px 0.125
     widthSize = CssUtils.calcDimension (Css.pct 100) paddingSize borderSize
+    heightSize = CssUtils.calcDimension (Css.pct 100) paddingSize (Css.px 0)
   in
   Html.Styled.textarea 
     [ Html.Styled.Events.onInput TextUpdate
     , onTab TabDown
     , Html.Styled.Attributes.value code 
+    , Html.Styled.Attributes.autocomplete False
+    , Html.Styled.Attributes.spellcheck False
+    , Html.Styled.Attributes.classList [("repl", True)]
     , css 
-      ([ fontFamily monospace
-       , fontSize (Css.pct 100)
-       , margin (Css.px 0)
+      ([ Css.width widthSize
+       , Css.height heightSize
+       , Css.padding paddingSize
        , border (Css.px 0)
        , borderRight3 borderSize Css.solid theme.border
-       , Css.width widthSize
-       , Css.padding paddingSize
-       , Css.resize Css.none
-       , Css.color theme.text
-       , Css.backgroundColor theme.primary
-       , Css.focus 
-         [ outline zero
-         ]
        ] ++ attrs)
   ] []
 
@@ -248,26 +262,22 @@ onTab msg =
 mainOutput : List (Css.Style) -> String -> Html.Styled.Html Msg
 mainOutput attrs output = 
   let
-    paddingSize = (Css.px 2)
-    borderSize = (Css.px 0.125)
+    paddingSize = Css.px 2
+    borderSize = Css.px 0.125
     widthSize = CssUtils.calcDimension (Css.pct 100) paddingSize borderSize
+    heightSize = CssUtils.calcDimension (Css.pct 100) paddingSize (Css.px 0)
   in
   Html.Styled.p
-    [ css
-      ([ fontFamily monospace
-        , fontSize (Css.px 14)
-        , Css.width widthSize
-        , Css.padding paddingSize
-        , Css.margin (Css.px 0)
-        , border (Css.px 0)
-        , borderRight3 borderSize Css.solid theme.border
-        , Css.backgroundColor theme.primary
-        , Css.color theme.text
-        ] ++ attrs)
+    [ Html.Styled.Attributes.classList [("repl", True)]
+    , css
+      ([ Css.width widthSize
+       , Css.height heightSize
+       , Css.padding paddingSize
+       , border (Css.px 0)
+       , borderLeft3 borderSize Css.solid theme.border
+       ] ++ attrs)
     ]
     [Html.Styled.text output]
-
---mainRepl : 
 
 intInputs : Int -> Int -> Element Msg
 intInputs count1 count2 =

@@ -41,20 +41,14 @@ main =
 
 type alias Model =
     { mainCode : String
-    , output : String
-    , count1 : Int
-    , count2 : Int
-    , backendReply : String
+    , codeOutput : String
     }
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( { mainCode = ""
-      , output = "output"
-      , count1 = 0
-      , count2 = 0
-      , backendReply = ""
+      , codeOutput = ""
       }
     , Cmd.none
     )
@@ -65,9 +59,7 @@ init _ =
 
 
 type Msg
-    = UpdateCount1 String
-    | UpdateCount2 String
-    | TextUpdate String
+    = TextUpdate String
     | SendPost
     | GotReply (Result Http.Error String)
     | TabDown
@@ -76,30 +68,6 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        UpdateCount1 newCount ->
-            if newCount == "" then
-                ( { model | count1 = 0 }, Cmd.none )
-
-            else
-                case String.toInt newCount of
-                    Just integer ->
-                        ( { model | count1 = integer }, Cmd.none )
-
-                    Nothing ->
-                        ( model, Cmd.none )
-
-        UpdateCount2 newCount ->
-            if newCount == "" then
-                ( { model | count2 = 0 }, Cmd.none )
-
-            else
-                case String.toInt newCount of
-                    Just integer ->
-                        ( { model | count2 = integer }, Cmd.none )
-
-                    Nothing ->
-                        ( model, Cmd.none )
-
         TextUpdate newcontent ->
             ( { model | mainCode = newcontent }, Cmd.none )
 
@@ -123,10 +91,10 @@ update msg model =
         GotReply result ->
             case result of
                 Ok fullText ->
-                    ( { model | backendReply = fullText }, Cmd.none )
+                    ( { model | codeOutput = fullText }, Cmd.none )
 
                 Err _ ->
-                    ( { model | backendReply = "FAILURE" }, Cmd.none )
+                    ( { model | codeOutput = "FAILURE" }, Cmd.none )
 
         TabDown ->
             ( { model | mainCode = model.mainCode ++ "  " }, Cmd.none )
@@ -194,7 +162,7 @@ view model =
           , Css.float left
         ]
     ] 
-    [ mainOutput [] model.backendReply
+    [ mainOutput [] model.codeOutput
     ]
   ]
 
@@ -215,7 +183,7 @@ mainHeader attrs =
       Html.Styled.button 
         [ Html.Styled.Events.onClick SendPost
         ]
-        [ ]
+        [ Html.Styled.text "Run" ]
     ]
 
 mainInput : List (Css.Style) ->  String -> Html.Styled.Html Msg
@@ -237,6 +205,7 @@ mainInput attrs code =
       ([ Css.width widthSize
        , Css.height heightSize
        , Css.padding paddingSize
+       , Css.resize Css.none
        , border (Css.px 0)
        , borderRight3 borderSize Css.solid theme.border
        ] ++ attrs)
@@ -278,23 +247,3 @@ mainOutput attrs output =
        ] ++ attrs)
     ]
     [Html.Styled.text output]
-
-intInputs : Int -> Int -> Element Msg
-intInputs count1 count2 =
-    Element.row
-        [ Border.rounded 3
-        , Element.padding 30
-        ]
-        [ Input.text []
-            { label = Input.labelAbove [] (Element.text "")
-            , onChange = UpdateCount1
-            , placeholder = Just (Input.placeholder [] (Element.text "enter some text"))
-            , text = String.fromInt count1
-            }
-        , Input.text []
-            { onChange = UpdateCount2
-            , text = String.fromInt count2
-            , placeholder = Just (Input.placeholder [] (Element.text "enter some text"))
-            , label = Input.labelAbove [] (Element.text "")
-            }
-        ]

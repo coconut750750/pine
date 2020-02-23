@@ -21,4 +21,7 @@ executable pine
                        scotty,
                        text,
                        aeson,
-                       elm-street
+                       elm-street,
+                       text-conversions,
+                       hint
+  other-modules:       Types

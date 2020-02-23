@@ -10,7 +10,7 @@ import GHC.Generics
 data CodeSubmission = CodeSubmission
     { codeCount1    :: Int
     , codeCount2    :: Int
-    , codeText      :: Text
+    , codeText      :: String
     } deriving (Generic)
       deriving anyclass (Elm)
 

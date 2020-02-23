@@ -9,6 +9,8 @@ import Data.Text.Lazy.Encoding (decodeUtf8)
 import Control.Monad.IO.Class
 import Language.Haskell.Interpreter hiding (get)
 
+import Data.Text.Internal (showText)
+
 import Types (CodeSubmission(..), parseJSON)
 
 
@@ -37,11 +39,15 @@ main = do
     scotty 3000 $ do
         get "/testpost/:name" $ do
             name <- param "name"
-            text ("hello " <> name <> "!")
+            test <- liftIO $ evaluateStr $ name
+            text ("" <> test <> "")
         post "/testpost" $ do
             bodyBytes <- body
-            liftAndCatchIO $ evaluateStr $ show $ decodeUtf8 bodyBytes
-            -- text (pack ( show(addCodeSubmission (decode bodyBytes))))
+            -- decoded <- decodeUtf8 $ liftIO $ bodyBytes
+            test <- liftIO $ evaluateStr $ getCode $ decode bodyBytes
+            -- test <- liftIO $ evaluateStr $ unpack $ decodeUtf8 bodyBytes
+            -- liftAndCatchIO $ evaluateStr $ show $ decodeUtf8 bodyBytes
+            text (test)
         get "/" $
             file "./frontend/index.html"
 
@@ -55,3 +61,6 @@ addCodeSubmission (Just (CodeSubmission num1 num2 _)) =
     num1 + num2
 addCodeSubmission Nothing =
     0
+
+getCode :: Maybe CodeSubmission -> String
+getCode (Just (CodeSubmission _ _ code)) = code

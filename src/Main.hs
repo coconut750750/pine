@@ -8,6 +8,7 @@ import Data.Text.Lazy (pack, Text)
 import Data.Text.Lazy.Encoding (decodeUtf8)
 import Control.Monad.IO.Class
 import Language.Haskell.Interpreter hiding (get)
+import System.Environment (lookupEnv)
 
 import Data.Text.Internal (showText)
 
@@ -33,10 +34,15 @@ evaluateStr haskellStr = do
         Left err -> return $ pack (show err)
         Right str -> return $ pack (str)
         
+extractPort :: Maybe String -> Int
+extractPort portMaybe = case portMaybe of
+    Just value -> read value
+    Nothing -> 3000
 
 main = do
     putStrLn "Starting Server..."
-    scotty 3000 $ do
+    port <- extractPort <$> (lookupEnv "PORT")
+    scotty port $ do
         get "/testpost/:name" $ do
             name <- param "name"
             test <- liftIO $ evaluateStr $ name

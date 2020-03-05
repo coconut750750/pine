@@ -43,10 +43,9 @@ main = do
     putStrLn "Starting Server..."
     port <- extractPort <$> (lookupEnv "PORT")
     scotty port $ do
-        get "/testpost/:name" $ do
+        get "/servercheck/:name" $ do
             name <- param "name"
-            test <- liftIO $ evaluateStr $ name
-            text ("" <> test <> "")
+            text ("" <> name <> "")
         post "/testpost" $ do
             bodyBytes <- body
             -- decoded <- decodeUtf8 $ liftIO $ bodyBytes

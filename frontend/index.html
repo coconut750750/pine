@@ -8720,7 +8720,7 @@ var $rtfeldman$elm_css$Css$prop3 = F4(
 				_List_fromArray(
 					[argA.value, argB.value, argC.value])));
 	});
-var $rtfeldman$elm_css$Css$borderLeft3 = $rtfeldman$elm_css$Css$prop3('border-left');
+var $rtfeldman$elm_css$Css$borderRight3 = $rtfeldman$elm_css$Css$prop3('border-right');
 var $rtfeldman$elm_css$VirtualDom$Styled$property = F2(
 	function (key, value) {
 		return A3(
@@ -8752,18 +8752,24 @@ var $rtfeldman$elm_css$Html$Styled$Attributes$classList = function (classes) {
 				A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
 };
 var $rtfeldman$elm_css$Css$height = $rtfeldman$elm_css$Css$prop1('height');
-var $rtfeldman$elm_css$Html$Styled$p = $rtfeldman$elm_css$Html$Styled$node('p');
+var $rtfeldman$elm_css$Css$none = {backgroundImage: $rtfeldman$elm_css$Css$Structure$Compatible, blockAxisOverflow: $rtfeldman$elm_css$Css$Structure$Compatible, borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, cursor: $rtfeldman$elm_css$Css$Structure$Compatible, display: $rtfeldman$elm_css$Css$Structure$Compatible, hoverCapability: $rtfeldman$elm_css$Css$Structure$Compatible, inlineAxisOverflow: $rtfeldman$elm_css$Css$Structure$Compatible, keyframes: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNone: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNoneOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible, listStyleType: $rtfeldman$elm_css$Css$Structure$Compatible, listStyleTypeOrPositionOrImage: $rtfeldman$elm_css$Css$Structure$Compatible, none: $rtfeldman$elm_css$Css$Structure$Compatible, outline: $rtfeldman$elm_css$Css$Structure$Compatible, pointerDevice: $rtfeldman$elm_css$Css$Structure$Compatible, pointerEvents: $rtfeldman$elm_css$Css$Structure$Compatible, resize: $rtfeldman$elm_css$Css$Structure$Compatible, scriptingSupport: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationLine: $rtfeldman$elm_css$Css$Structure$Compatible, textTransform: $rtfeldman$elm_css$Css$Structure$Compatible, touchAction: $rtfeldman$elm_css$Css$Structure$Compatible, transform: $rtfeldman$elm_css$Css$Structure$Compatible, updateFrequency: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'none'};
 var $rtfeldman$elm_css$Css$padding = $rtfeldman$elm_css$Css$prop1('padding');
 var $rtfeldman$elm_css$Css$PercentageUnits = {$: 'PercentageUnits'};
 var $rtfeldman$elm_css$Css$pct = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PercentageUnits, '%');
 var $rtfeldman$elm_css$Css$PxUnits = {$: 'PxUnits'};
 var $rtfeldman$elm_css$Css$px = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PxUnits, 'px');
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			$rtfeldman$elm_css$VirtualDom$Styled$property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$readonly = $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty('readOnly');
+var $rtfeldman$elm_css$Css$resize = $rtfeldman$elm_css$Css$prop1('resize');
 var $rtfeldman$elm_css$Css$solid = {borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationStyle: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'solid'};
-var $rtfeldman$elm_css$VirtualDom$Styled$text = function (str) {
-	return $rtfeldman$elm_css$VirtualDom$Styled$Unstyled(
-		$elm$virtual_dom$VirtualDom$text(str));
-};
-var $rtfeldman$elm_css$Html$Styled$text = $rtfeldman$elm_css$VirtualDom$Styled$text;
+var $rtfeldman$elm_css$Html$Styled$textarea = $rtfeldman$elm_css$Html$Styled$node('textarea');
 var $rtfeldman$elm_css$Css$withPrecedingHash = function (str) {
 	return A2($elm$core$String$startsWith, '#', str) ? str : A2(
 		$elm$core$String$cons,
@@ -9154,6 +9160,15 @@ var $author$project$Repl$theme = {
 	secondary: $rtfeldman$elm_css$Css$hex('1c2027'),
 	text: $rtfeldman$elm_css$Css$hex('ffffff')
 };
+var $rtfeldman$elm_css$Css$top = $rtfeldman$elm_css$Css$prop1('top');
+var $rtfeldman$elm_css$Html$Styled$Attributes$value = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('value');
+var $rtfeldman$elm_css$Css$verticalAlign = function (fn) {
+	return A3(
+		$rtfeldman$elm_css$Css$Internal$getOverloadedProperty,
+		'verticalAlign',
+		'vertical-align',
+		fn($rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty));
+};
 var $rtfeldman$elm_css$Css$width = $rtfeldman$elm_css$Css$prop1('width');
 var $author$project$Repl$hardCoded = F2(
 	function (attrs, code) {
@@ -9162,14 +9177,16 @@ var $author$project$Repl$hardCoded = F2(
 		var heightSize = $rtfeldman$elm_css$Css$pct(100);
 		var borderSize = $rtfeldman$elm_css$Css$px(0.125);
 		return A2(
-			$rtfeldman$elm_css$Html$Styled$p,
+			$rtfeldman$elm_css$Html$Styled$textarea,
 			_List_fromArray(
 				[
+					$rtfeldman$elm_css$Html$Styled$Attributes$value(code),
 					$rtfeldman$elm_css$Html$Styled$Attributes$classList(
 					_List_fromArray(
 						[
 							_Utils_Tuple2('repl', true)
 						])),
+					$rtfeldman$elm_css$Html$Styled$Attributes$readonly(true),
 					$rtfeldman$elm_css$Html$Styled$Attributes$css(
 					_Utils_ap(
 						_List_fromArray(
@@ -9177,16 +9194,15 @@ var $author$project$Repl$hardCoded = F2(
 								$rtfeldman$elm_css$Css$width(widthSize),
 								$rtfeldman$elm_css$Css$height(heightSize),
 								$rtfeldman$elm_css$Css$padding(paddingSize),
+								$rtfeldman$elm_css$Css$resize($rtfeldman$elm_css$Css$none),
+								$rtfeldman$elm_css$Css$verticalAlign($rtfeldman$elm_css$Css$top),
 								$rtfeldman$elm_css$Css$border(
 								$rtfeldman$elm_css$Css$px(0)),
-								A3($rtfeldman$elm_css$Css$borderLeft3, borderSize, $rtfeldman$elm_css$Css$solid, $author$project$Repl$theme.border)
+								A3($rtfeldman$elm_css$Css$borderRight3, borderSize, $rtfeldman$elm_css$Css$solid, $author$project$Repl$theme.border)
 							]),
 						attrs))
 				]),
-			_List_fromArray(
-				[
-					$rtfeldman$elm_css$Html$Styled$text(code)
-				]));
+			_List_Nil);
 	});
 var $rtfeldman$elm_css$Css$left = $rtfeldman$elm_css$Css$prop1('left');
 var $author$project$Repl$SendPost = {$: 'SendPost'};
@@ -9218,6 +9234,11 @@ var $rtfeldman$elm_css$Html$Styled$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
+var $rtfeldman$elm_css$VirtualDom$Styled$text = function (str) {
+	return $rtfeldman$elm_css$VirtualDom$Styled$Unstyled(
+		$elm$virtual_dom$VirtualDom$text(str));
+};
+var $rtfeldman$elm_css$Html$Styled$text = $rtfeldman$elm_css$VirtualDom$Styled$text;
 var $author$project$Repl$mainHeader = function (attrs) {
 	var heightSize = $rtfeldman$elm_css$Css$pct(100);
 	var borderSize = $rtfeldman$elm_css$Css$px(0.25);
@@ -9261,8 +9282,6 @@ var $rtfeldman$elm_css$Html$Styled$Attributes$autocomplete = function (bool) {
 		'autocomplete',
 		bool ? 'on' : 'off');
 };
-var $rtfeldman$elm_css$Css$borderRight3 = $rtfeldman$elm_css$Css$prop3('border-right');
-var $rtfeldman$elm_css$Css$none = {backgroundImage: $rtfeldman$elm_css$Css$Structure$Compatible, blockAxisOverflow: $rtfeldman$elm_css$Css$Structure$Compatible, borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, cursor: $rtfeldman$elm_css$Css$Structure$Compatible, display: $rtfeldman$elm_css$Css$Structure$Compatible, hoverCapability: $rtfeldman$elm_css$Css$Structure$Compatible, inlineAxisOverflow: $rtfeldman$elm_css$Css$Structure$Compatible, keyframes: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNone: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNoneOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible, listStyleType: $rtfeldman$elm_css$Css$Structure$Compatible, listStyleTypeOrPositionOrImage: $rtfeldman$elm_css$Css$Structure$Compatible, none: $rtfeldman$elm_css$Css$Structure$Compatible, outline: $rtfeldman$elm_css$Css$Structure$Compatible, pointerDevice: $rtfeldman$elm_css$Css$Structure$Compatible, pointerEvents: $rtfeldman$elm_css$Css$Structure$Compatible, resize: $rtfeldman$elm_css$Css$Structure$Compatible, scriptingSupport: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationLine: $rtfeldman$elm_css$Css$Structure$Compatible, textTransform: $rtfeldman$elm_css$Css$Structure$Compatible, touchAction: $rtfeldman$elm_css$Css$Structure$Compatible, transform: $rtfeldman$elm_css$Css$Structure$Compatible, updateFrequency: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'none'};
 var $rtfeldman$elm_css$Html$Styled$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
 };
@@ -9323,18 +9342,7 @@ var $author$project$Repl$onTab = function (msg) {
 			},
 			A2($elm$json$Json$Decode$andThen, isTabKey, $elm$html$Html$Events$keyCode)));
 };
-var $rtfeldman$elm_css$Css$resize = $rtfeldman$elm_css$Css$prop1('resize');
-var $elm$json$Json$Encode$bool = _Json_wrap;
-var $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			$rtfeldman$elm_css$VirtualDom$Styled$property,
-			key,
-			$elm$json$Json$Encode$bool(bool));
-	});
 var $rtfeldman$elm_css$Html$Styled$Attributes$spellcheck = $rtfeldman$elm_css$Html$Styled$Attributes$boolProperty('spellcheck');
-var $rtfeldman$elm_css$Html$Styled$textarea = $rtfeldman$elm_css$Html$Styled$node('textarea');
-var $rtfeldman$elm_css$Html$Styled$Attributes$value = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('value');
 var $author$project$Repl$mainInput = F2(
 	function (attrs, code) {
 		var widthSize = $rtfeldman$elm_css$Css$pct(100);
@@ -9363,6 +9371,7 @@ var $author$project$Repl$mainInput = F2(
 								$rtfeldman$elm_css$Css$height(heightSize),
 								$rtfeldman$elm_css$Css$padding(paddingSize),
 								$rtfeldman$elm_css$Css$resize($rtfeldman$elm_css$Css$none),
+								$rtfeldman$elm_css$Css$verticalAlign($rtfeldman$elm_css$Css$top),
 								$rtfeldman$elm_css$Css$border(
 								$rtfeldman$elm_css$Css$px(0)),
 								A3($rtfeldman$elm_css$Css$borderRight3, borderSize, $rtfeldman$elm_css$Css$solid, $author$project$Repl$theme.border)
@@ -9371,6 +9380,8 @@ var $author$project$Repl$mainInput = F2(
 				]),
 			_List_Nil);
 	});
+var $rtfeldman$elm_css$Css$borderLeft3 = $rtfeldman$elm_css$Css$prop3('border-left');
+var $rtfeldman$elm_css$Html$Styled$p = $rtfeldman$elm_css$Html$Styled$node('p');
 var $author$project$Repl$mainOutput = F2(
 	function (attrs, output) {
 		var widthSize = $rtfeldman$elm_css$Css$pct(100);
@@ -9479,14 +9490,14 @@ var $author$project$Repl$view = function (model) {
 				_List_fromArray(
 					[
 						A2(
-						$rtfeldman$elm_css$Html$Styled$div,
+						$rtfeldman$elm_css$Html$Styled$span,
 						_List_fromArray(
 							[
 								$rtfeldman$elm_css$Html$Styled$Attributes$css(
 								_List_fromArray(
 									[
 										$rtfeldman$elm_css$Css$height(
-										$rtfeldman$elm_css$Css$pct(100)),
+										$rtfeldman$elm_css$Css$pct(33)),
 										$rtfeldman$elm_css$Css$width(
 										$rtfeldman$elm_css$Css$pct(50)),
 										$rtfeldman$elm_css$Css$float($rtfeldman$elm_css$Css$left)
@@ -9494,60 +9505,9 @@ var $author$project$Repl$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								A2(
-								$rtfeldman$elm_css$Html$Styled$span,
-								_List_fromArray(
-									[
-										$rtfeldman$elm_css$Html$Styled$Attributes$css(
-										_List_fromArray(
-											[
-												$rtfeldman$elm_css$Css$height(
-												$rtfeldman$elm_css$Css$pct(33)),
-												$rtfeldman$elm_css$Css$width(
-												$rtfeldman$elm_css$Css$pct(100)),
-												$rtfeldman$elm_css$Css$float($rtfeldman$elm_css$Css$left)
-											]))
-									]),
-								_List_fromArray(
-									[
-										A2($author$project$Repl$hardCoded, _List_Nil, model.prefix)
-									])),
-								A2(
-								$rtfeldman$elm_css$Html$Styled$span,
-								_List_fromArray(
-									[
-										$rtfeldman$elm_css$Html$Styled$Attributes$css(
-										_List_fromArray(
-											[
-												$rtfeldman$elm_css$Css$height(
-												$rtfeldman$elm_css$Css$pct(34)),
-												$rtfeldman$elm_css$Css$width(
-												$rtfeldman$elm_css$Css$pct(100)),
-												$rtfeldman$elm_css$Css$float($rtfeldman$elm_css$Css$left)
-											]))
-									]),
-								_List_fromArray(
-									[
-										A2($author$project$Repl$mainInput, _List_Nil, model.mainCode)
-									])),
-								A2(
-								$rtfeldman$elm_css$Html$Styled$span,
-								_List_fromArray(
-									[
-										$rtfeldman$elm_css$Html$Styled$Attributes$css(
-										_List_fromArray(
-											[
-												$rtfeldman$elm_css$Css$height(
-												$rtfeldman$elm_css$Css$pct(33)),
-												$rtfeldman$elm_css$Css$width(
-												$rtfeldman$elm_css$Css$pct(100)),
-												$rtfeldman$elm_css$Css$float($rtfeldman$elm_css$Css$left)
-											]))
-									]),
-								_List_fromArray(
-									[
-										A2($author$project$Repl$hardCoded, _List_Nil, model.suffix)
-									]))
+								A2($author$project$Repl$hardCoded, _List_Nil, model.prefix),
+								A2($author$project$Repl$mainInput, _List_Nil, model.mainCode),
+								A2($author$project$Repl$hardCoded, _List_Nil, model.suffix)
 							])),
 						A2(
 						$rtfeldman$elm_css$Html$Styled$span,

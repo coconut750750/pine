@@ -179,38 +179,16 @@ view model =
             ]
         , Html.Styled.div
             [ css [ Css.height (Css.px 700) ] ]
-            [ Html.Styled.div
+            [ Html.Styled.span
                 [ css
-                    [ Css.height (Css.pct 100)
+                    [ Css.height (Css.pct 33)
                     , Css.width (Css.pct 50)
                     , Css.float left
                     ]
                 ]
-                [ Html.Styled.span
-                    [ css
-                        [ Css.height (Css.pct 33)
-                        , Css.width (Css.pct 100)
-                        , Css.float left
-                        ]
-                    ]
-                    [ hardCoded [] model.prefix ]
-                , Html.Styled.span
-                    [ css
-                        [ Css.height (Css.pct 34)
-                        , Css.width (Css.pct 100)
-                        , Css.float left
-                        ]
-                    ]
-                    [ mainInput [] model.mainCode ]
-                , Html.Styled.span
-                    [ css
-                        [ Css.height (Css.pct 33)
-                        , Css.width (Css.pct 100)
-                        , Css.float left
-                        ]
-                    ]
-                    [ hardCoded [] model.suffix ]
-                ]
+                [ hardCoded [] model.prefix
+                , mainInput [] model.mainCode
+                , hardCoded [] model.suffix ]
             , Html.Styled.span
                 [ css
                     [ Css.height (Css.pct 100)
@@ -264,19 +242,23 @@ hardCoded attrs code =
         heightSize =
             Css.pct 100
     in
-    Html.Styled.p
-        [ Html.Styled.Attributes.classList [ ( "repl", True ) ]
+    Html.Styled.textarea
+        [ Html.Styled.Attributes.value code
+        , Html.Styled.Attributes.classList [ ( "repl", True ) ]
+        , Html.Styled.Attributes.readonly True
         , css
             ([ Css.width widthSize
              , Css.height heightSize
              , Css.padding paddingSize
+             , Css.resize Css.none
+             , Css.verticalAlign top
              , border (Css.px 0)
-             , borderLeft3 borderSize Css.solid theme.border
+             , borderRight3 borderSize Css.solid theme.border
              ]
                 ++ attrs
             )
         ]
-        [ Html.Styled.text code ]
+        []
 
 mainInput : List Css.Style -> String -> Html.Styled.Html Msg
 mainInput attrs code =
@@ -305,6 +287,7 @@ mainInput attrs code =
              , Css.height heightSize
              , Css.padding paddingSize
              , Css.resize Css.none
+             , Css.verticalAlign top
              , border (Css.px 0)
              , borderRight3 borderSize Css.solid theme.border
              ]

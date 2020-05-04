@@ -49,9 +49,7 @@ main =
 
 
 type alias Model =
-    { prefix : String
-    , mainCode : String
-    , suffix : String
+    { mainCode : String
     , codeOutput : String
     , haskellInterpreter : String
     }
@@ -59,9 +57,7 @@ type alias Model =
 
 init : Decode.Value -> ( Model, Cmd Msg )
 init flag =
-    ( { prefix = "let concatString :: String -> String -> String"
-      , mainCode = "    concatString str1 str2 = str1 ++ str2"
-      , suffix = "in concatString \"Hello\" \"World\""
+    ( { mainCode = ""
       , codeOutput = ""
       , haskellInterpreter =
             case Decode.decodeValue Decode.string flag of
@@ -93,20 +89,17 @@ update msg model =
             ( { model | mainCode = newcontent }, Cmd.none )
 
         SendPost ->
-            let
-                fullCode = model.prefix ++ "\n" ++ model.mainCode ++ "\n" ++ model.suffix
-            in
-                ( model
-                , Http.post
-                    { url = model.haskellInterpreter
-                    , body =
-                        Http.jsonBody
-                            (encodeCodeSubmission
-                                (CodeSubmission fullCode)
-                            )
-                    , expect = Http.expectString GotReply
-                    }
-                )
+            ( model
+            , Http.post
+                { url = model.haskellInterpreter
+                , body =
+                    Http.jsonBody
+                        (encodeCodeSubmission
+                            (CodeSubmission model.mainCode)
+                        )
+                , expect = Http.expectString GotReply
+                }
+            )
 
         GotReply result ->
             case result of
@@ -179,38 +172,14 @@ view model =
             ]
         , Html.Styled.div
             [ css [ Css.height (Css.px 700) ] ]
-            [ Html.Styled.div
+            [ Html.Styled.span
                 [ css
                     [ Css.height (Css.pct 100)
                     , Css.width (Css.pct 50)
                     , Css.float left
                     ]
                 ]
-                [ Html.Styled.span
-                    [ css
-                        [ Css.height (Css.pct 33)
-                        , Css.width (Css.pct 100)
-                        , Css.float left
-                        ]
-                    ]
-                    [ hardCoded [] model.prefix ]
-                , Html.Styled.span
-                    [ css
-                        [ Css.height (Css.pct 34)
-                        , Css.width (Css.pct 100)
-                        , Css.float left
-                        ]
-                    ]
-                    [ mainInput [] model.mainCode ]
-                , Html.Styled.span
-                    [ css
-                        [ Css.height (Css.pct 33)
-                        , Css.width (Css.pct 100)
-                        , Css.float left
-                        ]
-                    ]
-                    [ hardCoded [] model.suffix ]
-                ]
+                [ mainInput [] model.mainCode ]
             , Html.Styled.span
                 [ css
                     [ Css.height (Css.pct 100)
@@ -248,35 +217,6 @@ mainHeader attrs =
             [ Html.Styled.text "Run" ]
         ]
 
-
-hardCoded : List Css.Style -> String -> Html.Styled.Html Msg
-hardCoded attrs code =
-    let
-        paddingSize =
-            Css.px 2
-
-        borderSize =
-            Css.px 0.125
-
-        widthSize =
-            Css.pct 100
-
-        heightSize =
-            Css.pct 100
-    in
-    Html.Styled.p
-        [ Html.Styled.Attributes.classList [ ( "repl", True ) ]
-        , css
-            ([ Css.width widthSize
-             , Css.height heightSize
-             , Css.padding paddingSize
-             , border (Css.px 0)
-             , borderLeft3 borderSize Css.solid theme.border
-             ]
-                ++ attrs
-            )
-        ]
-        [ Html.Styled.text code ]
 
 mainInput : List Css.Style -> String -> Html.Styled.Html Msg
 mainInput attrs code =

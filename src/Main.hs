@@ -9,7 +9,8 @@ import Data.Text.Lazy.Encoding (decodeUtf8)
 import Control.Monad.IO.Class
 import Language.Haskell.Interpreter hiding (get)
 import System.Environment (lookupEnv)
-import Network.Wai.Middleware.Cors (simpleCors)
+import Network.Wai.Middleware.Cors (simpleCors, CorsResourcePolicy(..), cors, simpleHeaders)
+import Network.Wai (Request)
 
 import Data.Text.Internal (showText)
 
@@ -40,19 +41,22 @@ extractPort portMaybe = case portMaybe of
     Just value -> read value
     Nothing -> 3000
 
+customCors :: Request -> Maybe CorsResourcePolicy
+customCors req = (Just $ CorsResourcePolicy Nothing ["POST"] simpleHeaders Nothing Nothing False False False)
+
 main = do
     putStrLn "Starting Server..."
     port <- extractPort <$> (lookupEnv "PORT")
     scotty port $ do
-        middleware simpleCors
+        middleware (cors customCors)
         get "/servercheck/:name" $ do
             name <- param "name"
             text ("" <> name <> "")
         post "/testpost" $ do
+            liftIO $ putStrLn "got something!"
             bodyBytes <- body
             -- decoded <- decodeUtf8 $ liftIO $ bodyBytes
             test <- liftIO $ evaluateStr $ getCode $ decode bodyBytes
-            liftIO $ putStrLn "got something!"
             -- liftAndCatchIO $ evaluateStr $ show $ decodeUtf8 bodyBytes
             text (test)
         get "/" $

@@ -24,5 +24,6 @@ executable pine
                        elm-street,
                        text-conversions,
                        hint,
-                       wai-cors
+                       wai,
+		       wai-cors
   other-modules:       Types

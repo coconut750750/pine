@@ -68,4 +68,4 @@ main = do
 
 getCode :: Maybe CodeSubmission -> String
 getCode (Just (CodeSubmission code)) = unpack code
-getCode (Nothing) = ""
+getCode (Nothing) = "Could not unpack text"

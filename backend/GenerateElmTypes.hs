@@ -16,4 +16,4 @@ type Types =
    '[ CodeSubmission ]
     
 generate :: IO ()
-generate = generateElm @Types $ defaultSettings "frontend/src" ["GeneratedTypes"]
+generate = generateElm @Types $ defaultSettings "./" ["GeneratedTypes"]

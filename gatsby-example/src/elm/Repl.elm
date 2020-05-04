@@ -23,15 +23,6 @@ import Json.Encode
 
 
 
--- A Droplet server running for testing
-
-
-defaultUrl : String
-defaultUrl =
-    "http://159.203.88.220:3000"
-
-
-
 -- MAIN
 
 
@@ -55,17 +46,11 @@ type alias Model =
     }
 
 
-init : Decode.Value -> ( Model, Cmd Msg )
-init flag =
+init : String -> ( Model, Cmd Msg )
+init haskellInterpreter =
     ( { mainCode = ""
       , codeOutput = ""
-      , haskellInterpreter =
-            case Decode.decodeValue Decode.string flag of
-                Ok url ->
-                    url
-
-                Err _ ->
-                    defaultUrl
+      , haskellInterpreter = haskellInterpreter
       }
     , Cmd.none
     )

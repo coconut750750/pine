@@ -50,22 +50,14 @@ main = do
     port <- extractPort <$> (lookupEnv "PORT")
     scotty port $ do
         middleware (cors customCors)
-        get "/servercheck/:name" $ do
-            name <- param "name"
-            text ("" <> name <> "")
-        post "/testpost" $ do
-            liftIO $ putStrLn "got something!"
+        post "/" $ do
             bodyBytes <- body
             -- decoded <- decodeUtf8 $ liftIO $ bodyBytes
             test <- liftIO $ evaluateStr $ getCode $ decode bodyBytes
             -- liftAndCatchIO $ evaluateStr $ show $ decodeUtf8 bodyBytes
             text (test)
-        get "/" $
-            file "./frontend/index.html"
-        get "/pine.js" $
-            file "./frontend/pine.js"
 
 
 getCode :: Maybe CodeSubmission -> String
 getCode (Just (CodeSubmission code)) = unpack code
-getCode (Nothing) = "Could not unpack text"
+getCode (Nothing) = "Could not parse input"

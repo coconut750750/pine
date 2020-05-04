@@ -181,9 +181,9 @@ view model =
             [ css [ Css.height (Css.px 700) ] ]
             [ Html.Styled.span
                 [ css
-                    [ Css.height (Css.pct 33)
-                    , Css.width (Css.pct 50)
+                    [ Css.width (Css.pct 50)
                     , Css.float left
+                    , Css.overflow auto
                     ]
                 ]
                 [ hardCoded [] model.prefix
@@ -241,11 +241,14 @@ hardCoded attrs code =
 
         heightSize =
             Css.pct 100
+        rows = 
+            List.length ([String.lines code])
     in
     Html.Styled.textarea
         [ Html.Styled.Attributes.value code
         , Html.Styled.Attributes.classList [ ( "repl", True ) ]
         , Html.Styled.Attributes.readonly True
+        , Html.Styled.Attributes.rows rows
         , css
             ([ Css.width widthSize
              , Css.height heightSize
@@ -274,6 +277,8 @@ mainInput attrs code =
 
         heightSize =
             Css.pct 100
+        rows = 
+            List.length ([String.lines code])
     in
     Html.Styled.textarea
         [ Html.Styled.Events.onInput TextUpdate
@@ -282,6 +287,7 @@ mainInput attrs code =
         , Html.Styled.Attributes.autocomplete False
         , Html.Styled.Attributes.spellcheck False
         , Html.Styled.Attributes.classList [ ( "repl", True ) ]
+        , Html.Styled.Attributes.rows rows
         , css
             ([ Css.width widthSize
              , Css.height heightSize

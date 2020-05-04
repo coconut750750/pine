@@ -25,5 +25,5 @@ executable pine
                        text-conversions,
                        hint,
                        wai,
-		       wai-cors
+                       wai-cors
   other-modules:       Types

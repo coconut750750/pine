@@ -81,7 +81,7 @@ update msg model =
                     Http.jsonBody
                         (encodeCodeSubmission
                             (CodeSubmission
-                                (String.toList model.mainCode)
+                                model.mainCode
                             )
                         )
                 , expect = Http.expectString GotReply

@@ -10,5 +10,5 @@ import GeneratedTypes.Types as T
 encodeCodeSubmission : T.CodeSubmission -> Value
 encodeCodeSubmission x = E.object
     [ ("tag", E.string "CodeSubmission")
-    , ("text", (E.list (E.string << String.fromChar)) x.text)
+    , ("text", E.string x.text)
     ]

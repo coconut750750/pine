@@ -8,7 +8,7 @@ import Elm (Elm, defaultSettings, generateElm, elmStreetToJson, elmStreetParseJs
 import GHC.Generics
 
 data CodeSubmission = CodeSubmission
-    { codeText      :: String
+    { codeText      :: Text
     } deriving (Generic)
       deriving anyclass (Elm)
 

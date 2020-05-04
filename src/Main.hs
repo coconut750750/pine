@@ -4,6 +4,7 @@ module Main where
 import Web.Scotty
 import GHC.Generics
 import Data.Aeson (FromJSON, ToJSON, decode)
+import Data.Text (unpack)
 import Data.Text.Lazy (pack, Text)
 import Data.Text.Lazy.Encoding (decodeUtf8)
 import Control.Monad.IO.Class
@@ -66,5 +67,5 @@ main = do
 
 
 getCode :: Maybe CodeSubmission -> String
-getCode (Just (CodeSubmission code)) = code
+getCode (Just (CodeSubmission code)) = unpack code
 getCode (Nothing) = ""

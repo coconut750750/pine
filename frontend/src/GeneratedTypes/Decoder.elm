@@ -10,4 +10,4 @@ import GeneratedTypes.Types as T
 
 decodeCodeSubmission : Decoder T.CodeSubmission
 decodeCodeSubmission = D.succeed T.CodeSubmission
-    |> required "text" (D.list elmStreetDecodeChar)
+    |> required "text" D.string

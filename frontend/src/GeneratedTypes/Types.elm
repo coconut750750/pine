@@ -4,5 +4,5 @@ import Time exposing (Posix)
 
 
 type alias CodeSubmission =
-    { text : List Char
+    { text : String
     }

@@ -1,7 +1,6 @@
 {-# LANGUAGE OverloadedStrings, DeriveGeneric, DeriveAnyClass, DataKinds, TypeApplications #-}
 
 {- | Generates Elm types from Haskell @types@ internal library.
-The generated files can be found in the @elm-example/src@ folder.
 -}
 
 module GenerateElm where
@@ -18,6 +17,3 @@ type Types =
     
 generate :: IO ()
 generate = generateElm @Types $ defaultSettings "frontend/src" ["GeneratedTypes"]
-
-main = do
-    generate

@@ -1,4 +1,4 @@
-module Main exposing (..)
+module Repl exposing (main)
 
 import Browser
 import Css exposing (..)
@@ -21,7 +21,6 @@ import Html.Styled.Events
 import Http exposing (stringBody)
 import Json.Decode as Decode
 import Json.Encode
-import Utils.CssUtils as CssUtils
 
 
 
@@ -44,13 +43,15 @@ main =
 type alias Model =
     { mainCode : String
     , codeOutput : String
+    , haskellInterpreter : String
     }
 
 
-init : () -> ( Model, Cmd Msg )
-init _ =
+init : String -> ( Model, Cmd Msg )
+init haskellInterpreter =
     ( { mainCode = ""
       , codeOutput = ""
+      , haskellInterpreter = haskellInterpreter
       }
     , Cmd.none
     )
@@ -76,7 +77,7 @@ update msg model =
         SendPost ->
             ( model
             , Http.post
-                { url = "testpost"
+                { url = model.haskellInterpreter
                 , body =
                     Http.jsonBody
                         (encodeCodeSubmission
@@ -135,9 +136,9 @@ view model =
             Css.vh 10
 
         replHeight =
-            Css.calc (Css.vh 100) Css.minus headerHeight
+            Css.calc (Css.vh 400) Css.minus headerHeight
     in
-    Html.Styled.div [ css [ Css.height (Css.pct 100) ] ]
+    Html.Styled.div []
         [ global
             [ class "repl"
                 [ fontFamily monospace
@@ -153,29 +154,30 @@ view model =
         , Html.Styled.div
             [ css
                 [ Css.height headerHeight
-                , Css.width (Css.vw 100)
+                , Css.width (Css.pct 100)
                 , Css.float left
                 ]
             ]
             [ mainHeader []
             ]
         , Html.Styled.div
-            [ css
-                [ Css.height replHeight
-                , Css.width (Css.vw 50)
-                , Css.float left
+            [ css [ Css.height (Css.px 700) ] ]
+            [ Html.Styled.span
+                [ css
+                    [ Css.height (Css.pct 100)
+                    , Css.width (Css.pct 50)
+                    , Css.float left
+                    ]
                 ]
-            ]
-            [ mainInput [] model.mainCode
-            ]
-        , Html.Styled.div
-            [ css
-                [ Css.height replHeight
-                , Css.width (Css.vw 50)
-                , Css.float left
+                [ mainInput [] model.mainCode ]
+            , Html.Styled.span
+                [ css
+                    [ Css.height (Css.pct 100)
+                    , Css.width (Css.pct 50)
+                    , Css.float left
+                    ]
                 ]
-            ]
-            [ mainOutput [] model.codeOutput
+                [ mainOutput [] model.codeOutput ]
             ]
         ]
 
@@ -187,7 +189,7 @@ mainHeader attrs =
             Css.px 0.25
 
         heightSize =
-            CssUtils.calcDimension (Css.pct 100) (Css.px 0) borderSize
+            Css.pct 100
     in
     Html.Styled.div
         [ css
@@ -216,10 +218,10 @@ mainInput attrs code =
             Css.px 0.125
 
         widthSize =
-            CssUtils.calcDimension (Css.pct 100) paddingSize borderSize
+            Css.pct 100
 
         heightSize =
-            CssUtils.calcDimension (Css.pct 100) paddingSize (Css.px 0)
+            Css.pct 100
     in
     Html.Styled.textarea
         [ Html.Styled.Events.onInput TextUpdate
@@ -272,10 +274,10 @@ mainOutput attrs output =
             Css.px 0.125
 
         widthSize =
-            CssUtils.calcDimension (Css.pct 100) paddingSize borderSize
+            Css.pct 100
 
         heightSize =
-            CssUtils.calcDimension (Css.pct 100) paddingSize (Css.px 0)
+            Css.pct 100
     in
     Html.Styled.p
         [ Html.Styled.Attributes.classList [ ( "repl", True ) ]

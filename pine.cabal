@@ -23,5 +23,6 @@ executable pine
                        aeson,
                        elm-street,
                        text-conversions,
-                       hint
+                       hint,
+                       wai-cors
   other-modules:       Types

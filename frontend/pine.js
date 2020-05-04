@@ -1,17 +1,3 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Repl</title>
-  <style>body { padding: 0; margin: 0; }</style>
-</head>
-
-<body>
-
-<pre id="elm"></pre>
-
-<script>
-try {
 (function(scope){
 'use strict';
 
@@ -5377,14 +5363,14 @@ var $elm$core$Task$perform = F2(
 var $elm$browser$Browser$element = _Browser_element;
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $author$project$Repl$init = function (_v0) {
+var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
 		{codeOutput: '', mainCode: ''},
 		$elm$core$Platform$Cmd$none);
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
-var $author$project$Repl$subscriptions = function (model) {
+var $author$project$Main$subscriptions = function (model) {
 	return $elm$core$Platform$Sub$none;
 };
 var $elm$core$Dict$Black = {$: 'Black'};
@@ -7715,7 +7701,7 @@ var $author$project$Generated$Types$CodeSubmission = F3(
 	function (count1, count2, text) {
 		return {count1: count1, count2: count2, text: text};
 	});
-var $author$project$Repl$GotReply = function (a) {
+var $author$project$Main$GotReply = function (a) {
 	return {$: 'GotReply', a: a};
 };
 var $elm$json$Json$Encode$int = _Json_wrap;
@@ -8419,7 +8405,7 @@ var $elm$http$Http$post = function (r) {
 	return $elm$http$Http$request(
 		{body: r.body, expect: r.expect, headers: _List_Nil, method: 'POST', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
 };
-var $author$project$Repl$update = F2(
+var $author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 'TextUpdate':
@@ -8437,7 +8423,7 @@ var $author$project$Repl$update = F2(
 							body: $elm$http$Http$jsonBody(
 								$author$project$Generated$Encoder$encodeCodeSubmission(
 									A3($author$project$Generated$Types$CodeSubmission, 1, 2, model.mainCode))),
-							expect: $elm$http$Http$expectString($author$project$Repl$GotReply),
+							expect: $elm$http$Http$expectString($author$project$Main$GotReply),
 							url: 'testpost'
 						}));
 			case 'GotReply':
@@ -8699,7 +8685,7 @@ var $rtfeldman$elm_css$Css$Global$global = function (snippets) {
 };
 var $rtfeldman$elm_css$Css$height = $rtfeldman$elm_css$Css$prop1('height');
 var $rtfeldman$elm_css$Css$left = $rtfeldman$elm_css$Css$prop1('left');
-var $author$project$Repl$SendPost = {$: 'SendPost'};
+var $author$project$Main$SendPost = {$: 'SendPost'};
 var $rtfeldman$elm_css$Css$border = $rtfeldman$elm_css$Css$prop1('border');
 var $rtfeldman$elm_css$Css$prop3 = F4(
 	function (key, argA, argB, argC) {
@@ -9147,13 +9133,13 @@ var $rtfeldman$elm_css$Css$rgb = F3(
 						[r, g, b])))
 		};
 	});
-var $author$project$Repl$theme = {
+var $author$project$Main$theme = {
 	border: A3($rtfeldman$elm_css$Css$rgb, 100, 100, 120),
 	primary: $rtfeldman$elm_css$Css$hex('20252d'),
 	secondary: $rtfeldman$elm_css$Css$hex('1c2027'),
 	text: $rtfeldman$elm_css$Css$hex('ffffff')
 };
-var $author$project$Repl$mainHeader = function (attrs) {
+var $author$project$Main$mainHeader = function (attrs) {
 	var borderSize = $rtfeldman$elm_css$Css$px(0.25);
 	var heightSize = A3(
 		$author$project$Utils$CssUtils$calcDimension,
@@ -9168,11 +9154,11 @@ var $author$project$Repl$mainHeader = function (attrs) {
 				_Utils_ap(
 					_List_fromArray(
 						[
-							$rtfeldman$elm_css$Css$backgroundColor($author$project$Repl$theme.secondary),
+							$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$theme.secondary),
 							$rtfeldman$elm_css$Css$minHeight(heightSize),
 							$rtfeldman$elm_css$Css$border(
 							$rtfeldman$elm_css$Css$px(0)),
-							A3($rtfeldman$elm_css$Css$borderBottom3, borderSize, $rtfeldman$elm_css$Css$solid, $author$project$Repl$theme.border)
+							A3($rtfeldman$elm_css$Css$borderBottom3, borderSize, $rtfeldman$elm_css$Css$solid, $author$project$Main$theme.border)
 						]),
 					attrs))
 			]),
@@ -9182,7 +9168,7 @@ var $author$project$Repl$mainHeader = function (attrs) {
 				$rtfeldman$elm_css$Html$Styled$button,
 				_List_fromArray(
 					[
-						$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Repl$SendPost)
+						$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Main$SendPost)
 					]),
 				_List_fromArray(
 					[
@@ -9190,8 +9176,8 @@ var $author$project$Repl$mainHeader = function (attrs) {
 					]))
 			]));
 };
-var $author$project$Repl$TabDown = {$: 'TabDown'};
-var $author$project$Repl$TextUpdate = function (a) {
+var $author$project$Main$TabDown = {$: 'TabDown'};
+var $author$project$Main$TextUpdate = function (a) {
 	return {$: 'TextUpdate', a: a};
 };
 var $rtfeldman$elm_css$VirtualDom$Styled$property = F2(
@@ -9280,7 +9266,7 @@ var $elm$json$Json$Decode$fail = _Json_fail;
 var $elm$json$Json$Decode$int = _Json_decodeInt;
 var $elm$html$Html$Events$keyCode = A2($elm$json$Json$Decode$field, 'keyCode', $elm$json$Json$Decode$int);
 var $elm$core$Debug$log = _Debug_log;
-var $author$project$Repl$onTab = function (msg) {
+var $author$project$Main$onTab = function (msg) {
 	var _v0 = A2($elm$core$Debug$log, 'onTab', $elm$html$Html$Events$keyCode);
 	var isTabKey = function (keyCode) {
 		return (keyCode === 9) ? $elm$json$Json$Decode$succeed(msg) : $elm$json$Json$Decode$fail('silent failure :)');
@@ -9309,7 +9295,7 @@ var $rtfeldman$elm_css$Html$Styled$Attributes$spellcheck = $rtfeldman$elm_css$Ht
 var $rtfeldman$elm_css$Html$Styled$textarea = $rtfeldman$elm_css$Html$Styled$node('textarea');
 var $rtfeldman$elm_css$Html$Styled$Attributes$value = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('value');
 var $rtfeldman$elm_css$Css$width = $rtfeldman$elm_css$Css$prop1('width');
-var $author$project$Repl$mainInput = F2(
+var $author$project$Main$mainInput = F2(
 	function (attrs, code) {
 		var paddingSize = $rtfeldman$elm_css$Css$px(2);
 		var heightSize = A3(
@@ -9327,8 +9313,8 @@ var $author$project$Repl$mainInput = F2(
 			$rtfeldman$elm_css$Html$Styled$textarea,
 			_List_fromArray(
 				[
-					$rtfeldman$elm_css$Html$Styled$Events$onInput($author$project$Repl$TextUpdate),
-					$author$project$Repl$onTab($author$project$Repl$TabDown),
+					$rtfeldman$elm_css$Html$Styled$Events$onInput($author$project$Main$TextUpdate),
+					$author$project$Main$onTab($author$project$Main$TabDown),
 					$rtfeldman$elm_css$Html$Styled$Attributes$value(code),
 					$rtfeldman$elm_css$Html$Styled$Attributes$autocomplete(false),
 					$rtfeldman$elm_css$Html$Styled$Attributes$spellcheck(false),
@@ -9347,7 +9333,7 @@ var $author$project$Repl$mainInput = F2(
 								$rtfeldman$elm_css$Css$resize($rtfeldman$elm_css$Css$none),
 								$rtfeldman$elm_css$Css$border(
 								$rtfeldman$elm_css$Css$px(0)),
-								A3($rtfeldman$elm_css$Css$borderRight3, borderSize, $rtfeldman$elm_css$Css$solid, $author$project$Repl$theme.border)
+								A3($rtfeldman$elm_css$Css$borderRight3, borderSize, $rtfeldman$elm_css$Css$solid, $author$project$Main$theme.border)
 							]),
 						attrs))
 				]),
@@ -9355,7 +9341,7 @@ var $author$project$Repl$mainInput = F2(
 	});
 var $rtfeldman$elm_css$Css$borderLeft3 = $rtfeldman$elm_css$Css$prop3('border-left');
 var $rtfeldman$elm_css$Html$Styled$p = $rtfeldman$elm_css$Html$Styled$node('p');
-var $author$project$Repl$mainOutput = F2(
+var $author$project$Main$mainOutput = F2(
 	function (attrs, output) {
 		var paddingSize = $rtfeldman$elm_css$Css$px(2);
 		var heightSize = A3(
@@ -9387,7 +9373,7 @@ var $author$project$Repl$mainOutput = F2(
 								$rtfeldman$elm_css$Css$padding(paddingSize),
 								$rtfeldman$elm_css$Css$border(
 								$rtfeldman$elm_css$Css$px(0)),
-								A3($rtfeldman$elm_css$Css$borderLeft3, borderSize, $rtfeldman$elm_css$Css$solid, $author$project$Repl$theme.border)
+								A3($rtfeldman$elm_css$Css$borderLeft3, borderSize, $rtfeldman$elm_css$Css$solid, $author$project$Main$theme.border)
 							]),
 						attrs))
 				]),
@@ -9406,7 +9392,7 @@ var $rtfeldman$elm_css$Css$VwUnits = {$: 'VwUnits'};
 var $rtfeldman$elm_css$Css$vw = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$VwUnits, 'vw');
 var $rtfeldman$elm_css$Css$UnitlessInteger = {$: 'UnitlessInteger'};
 var $rtfeldman$elm_css$Css$zero = {length: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAutoOrCoverOrContain: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNone: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNoneOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNumber: $rtfeldman$elm_css$Css$Structure$Compatible, number: $rtfeldman$elm_css$Css$Structure$Compatible, numericValue: 0, outline: $rtfeldman$elm_css$Css$Structure$Compatible, unitLabel: '', units: $rtfeldman$elm_css$Css$UnitlessInteger, value: '0'};
-var $author$project$Repl$view = function (model) {
+var $author$project$Main$view = function (model) {
 	var headerHeight = $rtfeldman$elm_css$Css$vh(10);
 	var replHeight = A3(
 		$rtfeldman$elm_css$Css$calc,
@@ -9431,8 +9417,8 @@ var $author$project$Repl$view = function (model) {
 								$rtfeldman$elm_css$Css$px(14)),
 								$rtfeldman$elm_css$Css$margin(
 								$rtfeldman$elm_css$Css$px(0)),
-								$rtfeldman$elm_css$Css$color($author$project$Repl$theme.text),
-								$rtfeldman$elm_css$Css$backgroundColor($author$project$Repl$theme.primary),
+								$rtfeldman$elm_css$Css$color($author$project$Main$theme.text),
+								$rtfeldman$elm_css$Css$backgroundColor($author$project$Main$theme.primary),
 								$rtfeldman$elm_css$Css$focus(
 								_List_fromArray(
 									[
@@ -9455,7 +9441,7 @@ var $author$project$Repl$view = function (model) {
 					]),
 				_List_fromArray(
 					[
-						$author$project$Repl$mainHeader(_List_Nil)
+						$author$project$Main$mainHeader(_List_Nil)
 					])),
 				A2(
 				$rtfeldman$elm_css$Html$Styled$div,
@@ -9486,7 +9472,7 @@ var $author$project$Repl$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								A2($author$project$Repl$mainInput, _List_Nil, model.mainCode)
+								A2($author$project$Main$mainInput, _List_Nil, model.mainCode)
 							])),
 						A2(
 						$rtfeldman$elm_css$Html$Styled$span,
@@ -9504,35 +9490,17 @@ var $author$project$Repl$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								A2($author$project$Repl$mainOutput, _List_Nil, model.codeOutput)
+								A2($author$project$Main$mainOutput, _List_Nil, model.codeOutput)
 							]))
 					]))
 			]));
 };
-var $author$project$Repl$main = $elm$browser$Browser$element(
+var $author$project$Main$main = $elm$browser$Browser$element(
 	{
-		init: $author$project$Repl$init,
-		subscriptions: $author$project$Repl$subscriptions,
-		update: $author$project$Repl$update,
-		view: A2($elm$core$Basics$composeR, $author$project$Repl$view, $rtfeldman$elm_css$Html$Styled$toUnstyled)
+		init: $author$project$Main$init,
+		subscriptions: $author$project$Main$subscriptions,
+		update: $author$project$Main$update,
+		view: A2($elm$core$Basics$composeR, $author$project$Main$view, $rtfeldman$elm_css$Html$Styled$toUnstyled)
 	});
-_Platform_export({'Repl':{'init':$author$project$Repl$main(
+_Platform_export({'Main':{'init':$author$project$Main$main(
 	$elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)}});}(this));
-
-  var app = Elm.Repl.init({ node: document.getElementById("elm") });
-}
-catch (e)
-{
-  // display initialization errors (e.g. bad flags, infinite recursion)
-  var header = document.createElement("h1");
-  header.style.fontFamily = "monospace";
-  header.innerText = "Initialization Error";
-  var pre = document.getElementById("elm");
-  document.body.insertBefore(header, pre);
-  pre.innerText = e;
-  throw e;
-}
-</script>
-
-</body>
-</html>

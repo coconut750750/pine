@@ -9,6 +9,7 @@ import Data.Text.Lazy.Encoding (decodeUtf8)
 import Control.Monad.IO.Class
 import Language.Haskell.Interpreter hiding (get)
 import System.Environment (lookupEnv)
+import Network.Wai.Middleware.Cors (simpleCors)
 
 import Data.Text.Internal (showText)
 
@@ -43,6 +44,7 @@ main = do
     putStrLn "Starting Server..."
     port <- extractPort <$> (lookupEnv "PORT")
     scotty port $ do
+        middleware simpleCors
         get "/servercheck/:name" $ do
             name <- param "name"
             text ("" <> name <> "")
@@ -50,11 +52,13 @@ main = do
             bodyBytes <- body
             -- decoded <- decodeUtf8 $ liftIO $ bodyBytes
             test <- liftIO $ evaluateStr $ getCode $ decode bodyBytes
-            -- test <- liftIO $ evaluateStr $ unpack $ decodeUtf8 bodyBytes
+            liftIO $ putStrLn "got something!"
             -- liftAndCatchIO $ evaluateStr $ show $ decodeUtf8 bodyBytes
             text (test)
         get "/" $
             file "./frontend/index.html"
+        get "/pine.js" $
+            file "./frontend/pine.js"
 
 
 -- parseJsonAndAdd :: ByteString -> Int

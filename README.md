@@ -1,4 +1,5 @@
 # pine
+
 ## Project Setup
 
 1. Install Haskell & stack
@@ -33,3 +34,7 @@ Installation instructions (and other cool stuff about Elm) can be found here:
     Our frontend is written in Elm and then compiled into Html/JS. To compile, run `elm make src/Main.elm` in the `/frontend/` directory.
     #### Backend:
     Our backend uses Scotty as our web framework, and should automatically serve the generated index.html file
+
+## FAQ
+1. What is 'frontend/elm-stuff'
+The elm-stuff/ directory is made by Elm, and is similar to what a node\_modules/ directory is

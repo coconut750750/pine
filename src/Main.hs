@@ -65,15 +65,6 @@ main = do
             file "./frontend/pine.js"
 
 
--- parseJsonAndAdd :: ByteString -> Int
--- parseJsonAndAdd jsonString = 
---     addCodeSubmission (decode jsonString)
-
-addCodeSubmission :: Maybe CodeSubmission -> Int
-addCodeSubmission (Just (CodeSubmission num1 num2 _)) =
-    num1 + num2
-addCodeSubmission Nothing =
-    0
-
 getCode :: Maybe CodeSubmission -> String
-getCode (Just (CodeSubmission _ _ code)) = code
+getCode (Just (CodeSubmission code)) = code
+getCode (Nothing) = ""

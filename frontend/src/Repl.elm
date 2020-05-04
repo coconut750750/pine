@@ -3,18 +3,17 @@ module Repl exposing (main)
 import Browser
 import Css exposing (..)
 import Css.Global exposing (..)
-import Debug exposing (log)
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
-import Generated.Decoder exposing (decodeCodeSubmission)
-import Generated.Encoder exposing (encodeCodeSubmission)
-import Generated.Types exposing (CodeSubmission)
+import GeneratedTypes.Decoder exposing (decodeCodeSubmission)
+import GeneratedTypes.Encoder exposing (encodeCodeSubmission)
+import GeneratedTypes.Types exposing (CodeSubmission)
 import Html exposing (Html, div, input, text, textarea)
 import Html.Attributes exposing (style)
-import Html.Events exposing (onClick, onInput, preventDefaultOn)
+import Html.Events exposing (on, onClick, onInput, preventDefaultOn)
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events
@@ -82,9 +81,7 @@ update msg model =
                     Http.jsonBody
                         (encodeCodeSubmission
                             (CodeSubmission
-                                1
-                                2
-                                model.mainCode
+                                (String.toList model.mainCode)
                             )
                         )
                 , expect = Http.expectString GotReply
@@ -100,7 +97,7 @@ update msg model =
                     ( { model | codeOutput = "FAILURE" }, Cmd.none )
 
         TabDown ->
-            ( { model | mainCode = model.mainCode ++ "  " }, Cmd.none )
+            ( { model | mainCode = model.mainCode ++ "\t" }, Cmd.none )
 
 
 
@@ -247,16 +244,12 @@ mainInput attrs code =
 onTab : msg -> Html.Styled.Attribute msg
 onTab msg =
     let
-        _ =
-            Debug.log "onTab" Html.Events.keyCode
-    in
-    let
         isTabKey keyCode =
             if keyCode == 9 then
                 Decode.succeed msg
 
             else
-                Decode.fail "silent failure :)"
+                Decode.fail "It's not a tab key :)"
     in
     Html.Events.keyCode
         |> Decode.andThen isTabKey

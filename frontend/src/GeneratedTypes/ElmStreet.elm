@@ -1,4 +1,4 @@
-module Generated.ElmStreet exposing (..)
+module GeneratedTypes.ElmStreet exposing (..)
 
 import Json.Encode as E exposing (Value)
 import Json.Decode as D exposing (Decoder)

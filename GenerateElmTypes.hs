@@ -10,10 +10,14 @@ import Data.Aeson (FromJSON, ToJSON, toJSON, parseJSON)
 import Data.Text (Text)
 import Elm (Elm, defaultSettings, generateElm, elmStreetToJson, elmStreetParseJson)
 import GHC.Generics
+import Types (CodeSubmission)
 
 
 type Types =
    '[ CodeSubmission ]
     
 generate :: IO ()
-generate = generateElm @Types $ defaultSettings "frontend/src" ["Generated"]
+generate = generateElm @Types $ defaultSettings "frontend/src" ["GeneratedTypes"]
+
+main = do
+    generate

@@ -35,6 +35,11 @@ Installation instructions (and other cool stuff about Elm) can be found here:
     #### Backend:
     Our backend uses Scotty as our web framework, and should automatically serve the generated index.html file
 
+4. If and when necessary, you can automatically generate Elm types from the Haskell src/Types.hs
+    1. run `stack ghci` to open the interpreter from the root directory
+    2. type `:load GenerateElmTypes.hs` to load the 
+    2. type `generate` to run the loaded function. This will generate type files for Elm under "./frontend/src/GeneratedTypes"
+
 ## FAQ
 1. What is 'frontend/elm-stuff'
 The elm-stuff/ directory is made by Elm, and is similar to what a node\_modules/ directory is

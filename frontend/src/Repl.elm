@@ -184,12 +184,13 @@ view model =
                     [ Css.height (Css.pct 100)
                     , Css.width (Css.pct 50)
                     , Css.float left
+                    , Css.backgroundColor theme.primary
                     , Css.overflow auto
                     ]
                 ]
                 [ hardCoded [Css.height auto] model.prefix
                 , mainInput [Css.height auto] model.mainCode
-                , hardCoded [Css.height (Css.pct 100)] model.suffix ]
+                , hardCoded [Css.height auto] model.suffix ]
             , Html.Styled.span
                 [ css
                     [ Css.height (Css.pct 100)
@@ -279,7 +280,7 @@ mainInput attrs code =
         heightSize =
             Css.pct 100
         rows = 
-            List.length (String.lines code)
+            (List.length (String.lines code))
     in
     Html.Styled.textarea
         [ Html.Styled.Events.onInput TextUpdate

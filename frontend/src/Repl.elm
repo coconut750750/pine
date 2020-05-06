@@ -20,6 +20,8 @@ import Html.Styled.Events
 import Http exposing (stringBody)
 import Json.Decode as Decode
 import Json.Encode
+import Svg.Styled exposing (svg)
+import Svg.Styled.Attributes exposing (width, height, viewBox)
 
 
 
@@ -221,16 +223,55 @@ mainHeader attrs =
         [ css
             ([ Css.backgroundColor theme.secondary
              , Css.minHeight heightSize
+             , Css.height heightSize
              , border (Css.px 0)
              , borderBottom3 borderSize Css.solid theme.border
              ]
                 ++ attrs
             )
         ]
-        [ Html.Styled.button
-            [ Html.Styled.Events.onClick SendPost
+        [ Html.Styled.div 
+            [ css 
+                    ([ Css.displayFlex
+                    ,  Css.height (Css.pct 100)
+                    ])
+            ] 
+            [
+            Html.Styled.a
+                [ Html.Styled.Events.onClick SendPost
+                , css 
+                    ([ Css.cursor Css.pointer
+                    ,  Css.color theme.text
+                    ,  Css.fontFamily monospace
+                    ,  Css.displayFlex
+                    ,  Css.alignItems Css.center
+                    ,  Css.marginLeft (Css.vw 1)
+                    ])
+                ]
+                [ playButton []
+                , Html.Styled.text "Run"
+                ]
             ]
-            [ Html.Styled.text "Run" ]
+        ]
+
+playButton : List Css.Style -> Html.Styled.Html Msg
+playButton attrs = 
+    let
+        borderSize =
+            Css.px 0.25
+    in
+    Svg.Styled.svg 
+        [ Svg.Styled.Attributes.width "16"
+        , Svg.Styled.Attributes.height "16"
+        , Svg.Styled.Attributes.viewBox "0 0 24 24"
+        , Svg.Styled.Attributes.fill "none"
+        , Svg.Styled.Attributes.stroke "white"
+        , Svg.Styled.Attributes.strokeWidth "1.4"
+        , Svg.Styled.Attributes.strokeLinecap "round"
+        ]
+        [ Svg.Styled.polygon 
+            [ Svg.Styled.Attributes.points "5,3,19,12,5,21,5,3" ] 
+            []
         ]
 
 getHardcodeDisplay : String -> Css.Style

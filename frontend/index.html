@@ -8833,6 +8833,14 @@ var $author$project$Repl$hardCoded = F2(
 var $rtfeldman$elm_css$Css$hidden = {borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, overflow: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'hidden', visibility: $rtfeldman$elm_css$Css$Structure$Compatible};
 var $rtfeldman$elm_css$Css$left = $rtfeldman$elm_css$Css$prop1('left');
 var $author$project$Repl$SendPost = {$: 'SendPost'};
+var $rtfeldman$elm_css$Html$Styled$a = $rtfeldman$elm_css$Html$Styled$node('a');
+var $rtfeldman$elm_css$Css$alignItems = function (fn) {
+	return A3(
+		$rtfeldman$elm_css$Css$Internal$getOverloadedProperty,
+		'alignItems',
+		'align-items',
+		fn($rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty));
+};
 var $rtfeldman$elm_css$Css$prop3 = F4(
 	function (key, argA, argB, argC) {
 		return A2(
@@ -8845,8 +8853,12 @@ var $rtfeldman$elm_css$Css$prop3 = F4(
 					[argA.value, argB.value, argC.value])));
 	});
 var $rtfeldman$elm_css$Css$borderBottom3 = $rtfeldman$elm_css$Css$prop3('border-bottom');
-var $rtfeldman$elm_css$Html$Styled$button = $rtfeldman$elm_css$Html$Styled$node('button');
+var $rtfeldman$elm_css$Css$center = $rtfeldman$elm_css$Css$prop1('center');
+var $rtfeldman$elm_css$Css$cursor = $rtfeldman$elm_css$Css$prop1('cursor');
+var $rtfeldman$elm_css$Css$displayFlex = A2($rtfeldman$elm_css$Css$property, 'display', 'flex');
+var $rtfeldman$elm_css$Css$marginLeft = $rtfeldman$elm_css$Css$prop1('margin-left');
 var $rtfeldman$elm_css$Css$minHeight = $rtfeldman$elm_css$Css$prop1('min-height');
+var $rtfeldman$elm_css$Css$monospace = {fontFamily: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'monospace'};
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -8872,6 +8884,48 @@ var $rtfeldman$elm_css$Html$Styled$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
+var $rtfeldman$elm_css$Svg$Styled$Attributes$fill = $rtfeldman$elm_css$VirtualDom$Styled$attribute('fill');
+var $rtfeldman$elm_css$Svg$Styled$Attributes$height = $rtfeldman$elm_css$VirtualDom$Styled$attribute('height');
+var $rtfeldman$elm_css$Svg$Styled$Attributes$points = $rtfeldman$elm_css$VirtualDom$Styled$attribute('points');
+var $rtfeldman$elm_css$VirtualDom$Styled$NodeNS = F4(
+	function (a, b, c, d) {
+		return {$: 'NodeNS', a: a, b: b, c: c, d: d};
+	});
+var $rtfeldman$elm_css$VirtualDom$Styled$nodeNS = $rtfeldman$elm_css$VirtualDom$Styled$NodeNS;
+var $rtfeldman$elm_css$Svg$Styled$node = $rtfeldman$elm_css$VirtualDom$Styled$nodeNS('http://www.w3.org/2000/svg');
+var $rtfeldman$elm_css$Svg$Styled$polygon = $rtfeldman$elm_css$Svg$Styled$node('polygon');
+var $rtfeldman$elm_css$Svg$Styled$Attributes$stroke = $rtfeldman$elm_css$VirtualDom$Styled$attribute('stroke');
+var $rtfeldman$elm_css$Svg$Styled$Attributes$strokeLinecap = $rtfeldman$elm_css$VirtualDom$Styled$attribute('stroke-linecap');
+var $rtfeldman$elm_css$Svg$Styled$Attributes$strokeWidth = $rtfeldman$elm_css$VirtualDom$Styled$attribute('stroke-width');
+var $rtfeldman$elm_css$Svg$Styled$svg = $rtfeldman$elm_css$Svg$Styled$node('svg');
+var $rtfeldman$elm_css$Svg$Styled$Attributes$viewBox = $rtfeldman$elm_css$VirtualDom$Styled$attribute('viewBox');
+var $rtfeldman$elm_css$Svg$Styled$Attributes$width = $rtfeldman$elm_css$VirtualDom$Styled$attribute('width');
+var $author$project$Repl$playButton = function (attrs) {
+	var borderSize = $rtfeldman$elm_css$Css$px(0.25);
+	return A2(
+		$rtfeldman$elm_css$Svg$Styled$svg,
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Svg$Styled$Attributes$width('16'),
+				$rtfeldman$elm_css$Svg$Styled$Attributes$height('16'),
+				$rtfeldman$elm_css$Svg$Styled$Attributes$viewBox('0 0 24 24'),
+				$rtfeldman$elm_css$Svg$Styled$Attributes$fill('none'),
+				$rtfeldman$elm_css$Svg$Styled$Attributes$stroke('white'),
+				$rtfeldman$elm_css$Svg$Styled$Attributes$strokeWidth('1.4'),
+				$rtfeldman$elm_css$Svg$Styled$Attributes$strokeLinecap('round')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$rtfeldman$elm_css$Svg$Styled$polygon,
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Svg$Styled$Attributes$points('5,3,19,12,5,21,5,3')
+					]),
+				_List_Nil)
+			]));
+};
+var $rtfeldman$elm_css$Css$pointer = {cursor: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'pointer'};
 var $rtfeldman$elm_css$Css$solid = {borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationStyle: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'solid'};
 var $rtfeldman$elm_css$VirtualDom$Styled$text = function (str) {
 	return $rtfeldman$elm_css$VirtualDom$Styled$Unstyled(
@@ -9269,6 +9323,8 @@ var $author$project$Repl$theme = {
 	secondary: $rtfeldman$elm_css$Css$hex('1c2027'),
 	text: $rtfeldman$elm_css$Css$hex('ffffff')
 };
+var $rtfeldman$elm_css$Css$VwUnits = {$: 'VwUnits'};
+var $rtfeldman$elm_css$Css$vw = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$VwUnits, 'vw');
 var $author$project$Repl$mainHeader = function (attrs) {
 	var heightSize = $rtfeldman$elm_css$Css$pct(100);
 	var borderSize = $rtfeldman$elm_css$Css$px(0.25);
@@ -9282,6 +9338,7 @@ var $author$project$Repl$mainHeader = function (attrs) {
 						[
 							$rtfeldman$elm_css$Css$backgroundColor($author$project$Repl$theme.secondary),
 							$rtfeldman$elm_css$Css$minHeight(heightSize),
+							$rtfeldman$elm_css$Css$height(heightSize),
 							$rtfeldman$elm_css$Css$border(
 							$rtfeldman$elm_css$Css$px(0)),
 							A3($rtfeldman$elm_css$Css$borderBottom3, borderSize, $rtfeldman$elm_css$Css$solid, $author$project$Repl$theme.border)
@@ -9291,14 +9348,41 @@ var $author$project$Repl$mainHeader = function (attrs) {
 		_List_fromArray(
 			[
 				A2(
-				$rtfeldman$elm_css$Html$Styled$button,
+				$rtfeldman$elm_css$Html$Styled$div,
 				_List_fromArray(
 					[
-						$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Repl$SendPost)
+						$rtfeldman$elm_css$Html$Styled$Attributes$css(
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Css$displayFlex,
+								$rtfeldman$elm_css$Css$height(
+								$rtfeldman$elm_css$Css$pct(100))
+							]))
 					]),
 				_List_fromArray(
 					[
-						$rtfeldman$elm_css$Html$Styled$text('Run')
+						A2(
+						$rtfeldman$elm_css$Html$Styled$a,
+						_List_fromArray(
+							[
+								$rtfeldman$elm_css$Html$Styled$Events$onClick($author$project$Repl$SendPost),
+								$rtfeldman$elm_css$Html$Styled$Attributes$css(
+								_List_fromArray(
+									[
+										$rtfeldman$elm_css$Css$cursor($rtfeldman$elm_css$Css$pointer),
+										$rtfeldman$elm_css$Css$color($author$project$Repl$theme.text),
+										$rtfeldman$elm_css$Css$fontFamily($rtfeldman$elm_css$Css$monospace),
+										$rtfeldman$elm_css$Css$displayFlex,
+										$rtfeldman$elm_css$Css$alignItems($rtfeldman$elm_css$Css$center),
+										$rtfeldman$elm_css$Css$marginLeft(
+										$rtfeldman$elm_css$Css$vw(1))
+									]))
+							]),
+						_List_fromArray(
+							[
+								$author$project$Repl$playButton(_List_Nil),
+								$rtfeldman$elm_css$Html$Styled$text('Run')
+							]))
 					]))
 			]));
 };
@@ -9450,7 +9534,6 @@ var $author$project$Repl$mainOutput = F2(
 var $rtfeldman$elm_css$Css$margin = $rtfeldman$elm_css$Css$prop1('margin');
 var $rtfeldman$elm_css$Css$Subtraction = {$: 'Subtraction'};
 var $rtfeldman$elm_css$Css$minus = $rtfeldman$elm_css$Css$Subtraction;
-var $rtfeldman$elm_css$Css$monospace = {fontFamily: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'monospace'};
 var $rtfeldman$elm_css$Css$outline = $rtfeldman$elm_css$Css$prop1('outline');
 var $rtfeldman$elm_css$Css$overflowX = $rtfeldman$elm_css$Css$prop1('overflow-x');
 var $rtfeldman$elm_css$Css$overflowY = $rtfeldman$elm_css$Css$prop1('overflow-y');

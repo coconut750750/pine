@@ -32,6 +32,20 @@ var flags3 = {
     suffix:     "",
 }
 
+var flags4 = {
+    interpreter: interpreterServer,
+    prefix:     
+`let
+    quicksort []     = []
+    quicksort (p:xs) = (quicksort lesser) ++ [p] ++ (quicksort greater)`,
+    infix:      
+`        where
+             lesser  = filter (< p) xs
+             greater = filter (>= p) xs`,
+    suffix: `in 
+    quicksort [2, 5, 9, 6, 1, 8, 4, 8, 0]`,
+}
+
 const IndexPage = () => (
   <Layout>
     <SEO title="Home" />
@@ -46,8 +60,12 @@ const IndexPage = () => (
     <Elm src={ Pine.Elm.Repl } flags={ flags2 }todos/>
     <br/>
     <br/>
-    <h3>Multiline expressions?</h3>
+    <h3>Multiline expressions too!</h3>
     <Elm src={ Pine.Elm.Repl } flags={ flags3 }todos/>
+    <br/>
+    <br/>
+    <h3>Quicksorts, anyone?</h3>
+    <Elm src={ Pine.Elm.Repl } flags={ flags4 }todos/>
   </Layout>
 )
 

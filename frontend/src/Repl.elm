@@ -28,7 +28,7 @@ import Json.Encode
 
 defaultUrl : String
 defaultUrl =
-    "http://159.203.88.220:3000"
+    "http://localhost:3000"
 
 
 
@@ -133,10 +133,11 @@ subscriptions model =
 -- Style
 
 
-theme : { primary : Css.Color, secondary : Css.Color, border : Css.Color, text : Css.Color }
+theme : { primary : Css.Color, secondary : Css.Color, light : Css.Color, border : Css.Color, text : Css.Color }
 theme =
     { primary = Css.hex "20252d"
     , secondary = Css.hex "1c2027"
+    , light = Css.hex "404a5a"
     , border = Css.rgb 100 100 120
     , text = Css.hex "ffffff"
     }
@@ -153,7 +154,7 @@ view model =
             Css.vh 10
 
         replHeight =
-            Css.calc (Css.vh 400) Css.minus headerHeight
+            Css.calc (Css.vh 100) Css.minus headerHeight
     in
     Html.Styled.div []
         [ global
@@ -167,6 +168,9 @@ view model =
                     [ outline zero
                     ]
                 ]
+            , class "main_input"
+                [ Css.backgroundColor theme.light
+                ]
             ]
         , Html.Styled.div
             [ css
@@ -178,22 +182,23 @@ view model =
             [ mainHeader []
             ]
         , Html.Styled.div
-            [ css [ Css.height (Css.px 700) ] ]
-            [ Html.Styled.span
+            [ css [ Css.height replHeight ] ]
+            [ Html.Styled.div
                 [ css
                     [ Css.height (Css.pct 100)
                     , Css.width (Css.pct 50)
                     , Css.float left
                     , Css.backgroundColor theme.primary
-                    , Css.overflow auto
+                    , Css.overflowY scroll
+                    , Css.overflowX hidden
                     ]
                 ]
                 [ hardCoded [Css.height auto] model.prefix
                 , mainInput [Css.height auto] model.mainCode
                 , hardCoded [Css.height auto] model.suffix ]
-            , Html.Styled.span
+            , Html.Styled.div
                 [ css
-                    [ Css.height (Css.pct 100)
+                    [ Css.height replHeight
                     , Css.width (Css.pct 50)
                     , Css.float left
                     ]
@@ -228,13 +233,16 @@ mainHeader attrs =
             [ Html.Styled.text "Run" ]
         ]
 
+getHardcodeDisplay : String -> Css.Style
+getHardcodeDisplay code =
+    if String.length code == 0 then
+        Css.display Css.none
+    else
+        Css.display Css.block
 
 hardCoded : List Css.Style -> String -> Html.Styled.Html Msg
 hardCoded attrs code =
     let
-        paddingSize =
-            Css.px 2
-
         borderSize =
             Css.px 0.125
 
@@ -243,8 +251,11 @@ hardCoded attrs code =
 
         heightSize =
             Css.pct 100
+
         rows = 
             List.length (String.lines code)
+
+        displayStyle = getHardcodeDisplay code
     in
     Html.Styled.textarea
         [ Html.Styled.Attributes.value code
@@ -254,11 +265,10 @@ hardCoded attrs code =
         , css
             ([ Css.width widthSize
              , Css.height heightSize
-             , Css.padding paddingSize
              , Css.resize Css.none
              , Css.verticalAlign top
              , border (Css.px 0)
-             , borderRight3 borderSize Css.solid theme.border
+             , displayStyle
              ]
                 ++ attrs
             )
@@ -268,9 +278,6 @@ hardCoded attrs code =
 mainInput : List Css.Style -> String -> Html.Styled.Html Msg
 mainInput attrs code =
     let
-        paddingSize =
-            Css.px 2
-
         borderSize =
             Css.px 0.125
 
@@ -278,9 +285,13 @@ mainInput attrs code =
             Css.pct 100
 
         heightSize =
-            Css.pct 100
+            Css.auto
+
+        minHeightSize = 
+            Css.pct 50
+
         rows = 
-            (List.length (String.lines code))
+            List.length (String.lines code)
     in
     Html.Styled.textarea
         [ Html.Styled.Events.onInput TextUpdate
@@ -288,16 +299,16 @@ mainInput attrs code =
         , Html.Styled.Attributes.value code
         , Html.Styled.Attributes.autocomplete False
         , Html.Styled.Attributes.spellcheck False
-        , Html.Styled.Attributes.classList [ ( "repl", True ) ]
+        , Html.Styled.Attributes.classList [ ( "repl", True ), ( "main_input", True ) ]
         , Html.Styled.Attributes.rows rows
         , css
             ([ Css.width widthSize
              , Css.height heightSize
-             , Css.padding paddingSize
+             , Css.minHeight minHeightSize
              , Css.resize Css.none
              , Css.verticalAlign top
              , border (Css.px 0)
-             , borderRight3 borderSize Css.solid theme.border
+             , Css.backgroundColor theme.light
              ]
                 ++ attrs
             )
@@ -324,9 +335,6 @@ onTab msg =
 mainOutput : List Css.Style -> String -> Html.Styled.Html Msg
 mainOutput attrs output =
     let
-        paddingSize =
-            Css.px 2
-
         borderSize =
             Css.px 0.125
 
@@ -341,7 +349,6 @@ mainOutput attrs output =
         , css
             ([ Css.width widthSize
              , Css.height heightSize
-             , Css.padding paddingSize
              , border (Css.px 0)
              , borderLeft3 borderSize Css.solid theme.border
              ]

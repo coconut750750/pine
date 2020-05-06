@@ -46,6 +46,20 @@ var flags4 = {
     quicksort [2, 5, 9, 6, 1, 8, 4, 8, 0]`,
 }
 
+var flags5 = {
+    interpreter: interpreterServer,
+    prefix: ``,
+    infix:  `map ($ 3) [(4+), (10*), (^2), sqrt]`,
+    suffix: ``,
+}
+
+var flags6 = {
+    interpreter: interpreterServer,
+    prefix: ``,
+    infix:  `[1..]`,
+    suffix: ``,
+}
+
 const IndexPage = () => (
   <Layout>
     <SEO title="Home" />
@@ -66,6 +80,14 @@ const IndexPage = () => (
     <br/>
     <h3>Quicksorts, anyone?</h3>
     <Elm src={ Pine.Elm.Repl } flags={ flags4 }todos/>
+    <br/>
+    <br/>
+    <h3>Astounding Applicatives</h3>
+    <Elm src={ Pine.Elm.Repl } flags={ flags5 }todos/>
+    <br/>
+    <br/>
+    <h3>This won&apos;t work, but it also won&apos;t crash the server!</h3>
+    <Elm src={ Pine.Elm.Repl } flags={ flags6 }todos/>
   </Layout>
 )
 

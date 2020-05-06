@@ -32,7 +32,10 @@ import Types (CodeSubmission(..), parseJSON)
 -}
 evaluateStr :: String -> IO Text
 evaluateStr haskellStr = do
-    r <- runInterpreter $ setImports ["Prelude"] >> eval haskellStr
+    r <- runInterpreter $ 
+        setImports ["Prelude"] >> 
+        set [languageExtensions := [ScopedTypeVariables]] >> 
+        eval haskellStr
     case r of
         Left err -> return $ pack (show err)
         Right str -> return $ pack (str)

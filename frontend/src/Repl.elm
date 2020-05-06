@@ -154,7 +154,7 @@ view : Model -> Html.Styled.Html Msg
 view model =
     let
         headerHeight =
-            Css.vh 4
+            Css.em 2
 
         replHeight =
             Css.pct 100

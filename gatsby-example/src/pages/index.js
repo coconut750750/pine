@@ -3,7 +3,7 @@ import React from "react"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import Elm from "react-elm-components"
-import Pine from "./../../../pine/frontend/src/Repl.elm"
+import Pine from "./../../../frontend/src/Repl.elm"
 
 var haskellInterpreter = "http://159.203.88.220:3000";
 

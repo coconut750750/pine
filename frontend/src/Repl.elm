@@ -21,7 +21,7 @@ import Http exposing (stringBody)
 import Json.Decode as Decode
 import Json.Encode
 import Svg.Styled exposing (svg)
-import Svg.Styled.Attributes exposing (width, height, viewBox)
+import Svg.Styled.Attributes exposing (height, viewBox, width)
 
 
 
@@ -30,7 +30,7 @@ import Svg.Styled.Attributes exposing (width, height, viewBox)
 
 defaultUrl : String
 defaultUrl =
-    "http://localhost:3000"
+    "http://:3000"
 
 
 
@@ -96,19 +96,20 @@ update msg model =
 
         SendPost ->
             let
-                fullCode = model.prefix ++ "\n" ++ model.mainCode ++ "\n" ++ model.suffix
+                fullCode =
+                    model.prefix ++ "\n" ++ model.mainCode ++ "\n" ++ model.suffix
             in
-                ( model
-                , Http.post
-                    { url = model.haskellInterpreter
-                    , body =
-                        Http.jsonBody
-                            (encodeCodeSubmission
-                                (CodeSubmission fullCode)
-                            )
-                    , expect = Http.expectString GotReply
-                    }
-                )
+            ( model
+            , Http.post
+                { url = model.haskellInterpreter
+                , body =
+                    Http.jsonBody
+                        (encodeCodeSubmission
+                            (CodeSubmission fullCode)
+                        )
+                , expect = Http.expectString GotReply
+                }
+            )
 
         GotReply result ->
             case result of
@@ -153,12 +154,12 @@ view : Model -> Html.Styled.Html Msg
 view model =
     let
         headerHeight =
-            Css.vh 10
+            Css.vh 4
 
         replHeight =
-            Css.calc (Css.vh 100) Css.minus headerHeight
+            Css.pct 100
     in
-    Html.Styled.div []
+    Html.Styled.div [ css [ Css.height (Css.pct 100), Css.width (Css.pct 100), Css.displayFlex, Css.flexDirection Css.column ] ]
         [ global
             [ class "repl"
                 [ fontFamily monospace
@@ -184,25 +185,33 @@ view model =
             [ mainHeader []
             ]
         , Html.Styled.div
-            [ css [ Css.height replHeight ] ]
-            [ Html.Styled.div
+            [ css
+                [ Css.height replHeight
+                , Css.displayFlex
+                , Css.flexDirection Css.row
+                ]
+            ]
+            [ Html.Styled.span
                 [ css
-                    [ Css.height (Css.pct 100)
-                    , Css.width (Css.pct 50)
+                    [ Css.width (Css.pct 50)
                     , Css.float left
                     , Css.backgroundColor theme.primary
-                    , Css.overflowY scroll
+                    , Css.overflowY hidden
                     , Css.overflowX hidden
+                    , Css.flex (Css.num 1)
                     ]
                 ]
-                [ hardCoded [Css.height auto] model.prefix
-                , mainInput [Css.height auto] model.mainCode
-                , hardCoded [Css.height auto] model.suffix ]
-            , Html.Styled.div
+                [ hardCoded [ Css.height auto ] model.prefix
+                , mainInput [ Css.height auto ] model.mainCode
+                , hardCoded [ Css.height auto ] model.suffix
+                ]
+            , Html.Styled.span
                 [ css
-                    [ Css.height replHeight
-                    , Css.width (Css.pct 50)
-                    , Css.float left
+                    [ Css.width (Css.pct 50)
+                    , Css.float right
+                    , Css.backgroundColor theme.primary
+                    , Css.overflowY hidden
+                    , Css.flex (Css.num 1)
                     ]
                 ]
                 [ mainOutput [] model.codeOutput ]
@@ -230,23 +239,22 @@ mainHeader attrs =
                 ++ attrs
             )
         ]
-        [ Html.Styled.div 
-            [ css 
-                    ([ Css.displayFlex
-                    ,  Css.height (Css.pct 100)
-                    ])
-            ] 
-            [
-            Html.Styled.a
+        [ Html.Styled.div
+            [ css
+                [ Css.displayFlex
+                , Css.height (Css.pct 100)
+                ]
+            ]
+            [ Html.Styled.a
                 [ Html.Styled.Events.onClick SendPost
-                , css 
-                    ([ Css.cursor Css.pointer
-                    ,  Css.color theme.text
-                    ,  Css.fontFamily monospace
-                    ,  Css.displayFlex
-                    ,  Css.alignItems Css.center
-                    ,  Css.marginLeft (Css.vw 1)
-                    ])
+                , css
+                    [ Css.cursor Css.pointer
+                    , Css.color theme.text
+                    , Css.fontFamily monospace
+                    , Css.displayFlex
+                    , Css.alignItems Css.center
+                    , Css.marginLeft (Css.vw 1)
+                    ]
                 ]
                 [ playButton []
                 , Html.Styled.text "Run"
@@ -254,13 +262,14 @@ mainHeader attrs =
             ]
         ]
 
+
 playButton : List Css.Style -> Html.Styled.Html Msg
-playButton attrs = 
+playButton attrs =
     let
         borderSize =
             Css.px 0.25
     in
-    Svg.Styled.svg 
+    Svg.Styled.svg
         [ Svg.Styled.Attributes.width "16"
         , Svg.Styled.Attributes.height "16"
         , Svg.Styled.Attributes.viewBox "0 0 24 24"
@@ -269,17 +278,20 @@ playButton attrs =
         , Svg.Styled.Attributes.strokeWidth "1.4"
         , Svg.Styled.Attributes.strokeLinecap "round"
         ]
-        [ Svg.Styled.polygon 
-            [ Svg.Styled.Attributes.points "5,3,19,12,5,21,5,3" ] 
+        [ Svg.Styled.polygon
+            [ Svg.Styled.Attributes.points "5,3,19,12,5,21,5,3" ]
             []
         ]
+
 
 getHardcodeDisplay : String -> Css.Style
 getHardcodeDisplay code =
     if String.length code == 0 then
         Css.display Css.none
+
     else
         Css.display Css.block
+
 
 hardCoded : List Css.Style -> String -> Html.Styled.Html Msg
 hardCoded attrs code =
@@ -293,10 +305,11 @@ hardCoded attrs code =
         heightSize =
             Css.pct 100
 
-        rows = 
+        rows =
             List.length (String.lines code)
 
-        displayStyle = getHardcodeDisplay code
+        displayStyle =
+            getHardcodeDisplay code
     in
     Html.Styled.textarea
         [ Html.Styled.Attributes.value code
@@ -316,6 +329,7 @@ hardCoded attrs code =
         ]
         []
 
+
 mainInput : List Css.Style -> String -> Html.Styled.Html Msg
 mainInput attrs code =
     let
@@ -328,10 +342,10 @@ mainInput attrs code =
         heightSize =
             Css.auto
 
-        minHeightSize = 
+        minHeightSize =
             Css.pct 50
 
-        rows = 
+        rows =
             List.length (String.lines code)
     in
     Html.Styled.textarea
@@ -345,7 +359,6 @@ mainInput attrs code =
         , css
             ([ Css.width widthSize
              , Css.height heightSize
-             , Css.minHeight minHeightSize
              , Css.resize Css.none
              , Css.verticalAlign top
              , border (Css.px 0)

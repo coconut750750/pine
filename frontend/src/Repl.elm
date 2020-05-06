@@ -3,6 +3,9 @@ module Repl exposing (main)
 import Browser
 import Css exposing (..)
 import Css.Global exposing (..)
+import Editor exposing (Editor, EditorConfig, EditorMsg)
+import Editor.Config exposing (WrapOption(..), default)
+import Editor.Update as E
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
@@ -21,7 +24,7 @@ import Http exposing (stringBody)
 import Json.Decode as Decode
 import Json.Encode
 import Svg.Styled exposing (svg)
-import Svg.Styled.Attributes exposing (width, height, viewBox)
+import Svg.Styled.Attributes exposing (height, viewBox, width)
 
 
 
@@ -31,6 +34,24 @@ import Svg.Styled.Attributes exposing (width, height, viewBox)
 defaultUrl : String
 defaultUrl =
     "http://localhost:3000"
+
+
+
+-- Editor config
+
+
+config : EditorConfig Msg
+config =
+    { editorMsg = EditorMsg
+    , width = 410
+    , height = 300
+    , lineHeight = 16.0
+    , showInfoPanel = False
+    , wrapParams = { maximumWidth = 55, optimalWidth = 50, stringWidth = String.length }
+    , wrapOption = DoWrap
+    , fontProportion = 1.0
+    , lineHeightFactor = 1.0
+    }
 
 
 
@@ -56,6 +77,7 @@ type alias Model =
     , suffix : String
     , codeOutput : String
     , haskellInterpreter : String
+    , editor : Editor
     }
 
 
@@ -72,6 +94,8 @@ init flag =
 
                 Err _ ->
                     defaultUrl
+      , editor =
+            Editor.init config "testString"
       }
     , Cmd.none
     )
@@ -86,6 +110,7 @@ type Msg
     | SendPost
     | GotReply (Result Http.Error String)
     | TabDown
+    | EditorMsg EditorMsg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -96,19 +121,20 @@ update msg model =
 
         SendPost ->
             let
-                fullCode = model.prefix ++ "\n" ++ model.mainCode ++ "\n" ++ model.suffix
+                fullCode =
+                    model.prefix ++ "\n" ++ model.mainCode ++ "\n" ++ model.suffix
             in
-                ( model
-                , Http.post
-                    { url = model.haskellInterpreter
-                    , body =
-                        Http.jsonBody
-                            (encodeCodeSubmission
-                                (CodeSubmission fullCode)
-                            )
-                    , expect = Http.expectString GotReply
-                    }
-                )
+            ( model
+            , Http.post
+                { url = model.haskellInterpreter
+                , body =
+                    Http.jsonBody
+                        (encodeCodeSubmission
+                            (CodeSubmission fullCode)
+                        )
+                , expect = Http.expectString GotReply
+                }
+            )
 
         GotReply result ->
             case result of
@@ -120,6 +146,13 @@ update msg model =
 
         TabDown ->
             ( { model | mainCode = model.mainCode ++ "\t" }, Cmd.none )
+
+        EditorMsg editorMsg ->
+            let
+                ( editor, cmd ) =
+                    Editor.update editorMsg model.editor
+            in
+            ( { model | editor = editor }, Cmd.map EditorMsg cmd )
 
 
 
@@ -195,9 +228,12 @@ view model =
                     , Css.overflowX hidden
                     ]
                 ]
-                [ hardCoded [Css.height auto] model.prefix
-                , mainInput [Css.height auto] model.mainCode
-                , hardCoded [Css.height auto] model.suffix ]
+                [ hardCoded [ Css.height auto ] model.prefix
+                , Html.Styled.div
+                    [ css [ Css.color theme.text ] ]
+                    [ Html.Styled.fromUnstyled (Editor.embedded config model.editor) ]
+                , hardCoded [ Css.height auto ] model.suffix
+                ]
             , Html.Styled.div
                 [ css
                     [ Css.height replHeight
@@ -230,23 +266,22 @@ mainHeader attrs =
                 ++ attrs
             )
         ]
-        [ Html.Styled.div 
-            [ css 
-                    ([ Css.displayFlex
-                    ,  Css.height (Css.pct 100)
-                    ])
-            ] 
-            [
-            Html.Styled.a
+        [ Html.Styled.div
+            [ css
+                [ Css.displayFlex
+                , Css.height (Css.pct 100)
+                ]
+            ]
+            [ Html.Styled.a
                 [ Html.Styled.Events.onClick SendPost
-                , css 
-                    ([ Css.cursor Css.pointer
-                    ,  Css.color theme.text
-                    ,  Css.fontFamily monospace
-                    ,  Css.displayFlex
-                    ,  Css.alignItems Css.center
-                    ,  Css.marginLeft (Css.vw 1)
-                    ])
+                , css
+                    [ Css.cursor Css.pointer
+                    , Css.color theme.text
+                    , Css.fontFamily monospace
+                    , Css.displayFlex
+                    , Css.alignItems Css.center
+                    , Css.marginLeft (Css.vw 1)
+                    ]
                 ]
                 [ playButton []
                 , Html.Styled.text "Run"
@@ -254,13 +289,14 @@ mainHeader attrs =
             ]
         ]
 
+
 playButton : List Css.Style -> Html.Styled.Html Msg
-playButton attrs = 
+playButton attrs =
     let
         borderSize =
             Css.px 0.25
     in
-    Svg.Styled.svg 
+    Svg.Styled.svg
         [ Svg.Styled.Attributes.width "16"
         , Svg.Styled.Attributes.height "16"
         , Svg.Styled.Attributes.viewBox "0 0 24 24"
@@ -269,17 +305,20 @@ playButton attrs =
         , Svg.Styled.Attributes.strokeWidth "1.4"
         , Svg.Styled.Attributes.strokeLinecap "round"
         ]
-        [ Svg.Styled.polygon 
-            [ Svg.Styled.Attributes.points "5,3,19,12,5,21,5,3" ] 
+        [ Svg.Styled.polygon
+            [ Svg.Styled.Attributes.points "5,3,19,12,5,21,5,3" ]
             []
         ]
+
 
 getHardcodeDisplay : String -> Css.Style
 getHardcodeDisplay code =
     if String.length code == 0 then
         Css.display Css.none
+
     else
         Css.display Css.block
+
 
 hardCoded : List Css.Style -> String -> Html.Styled.Html Msg
 hardCoded attrs code =
@@ -293,10 +332,11 @@ hardCoded attrs code =
         heightSize =
             Css.pct 100
 
-        rows = 
+        rows =
             List.length (String.lines code)
 
-        displayStyle = getHardcodeDisplay code
+        displayStyle =
+            getHardcodeDisplay code
     in
     Html.Styled.textarea
         [ Html.Styled.Attributes.value code
@@ -316,6 +356,7 @@ hardCoded attrs code =
         ]
         []
 
+
 mainInput : List Css.Style -> String -> Html.Styled.Html Msg
 mainInput attrs code =
     let
@@ -328,10 +369,10 @@ mainInput attrs code =
         heightSize =
             Css.auto
 
-        minHeightSize = 
+        minHeightSize =
             Css.pct 50
 
-        rows = 
+        rows =
             List.length (String.lines code)
     in
     Html.Styled.textarea

@@ -34,6 +34,11 @@ defaultUrl =
     "http://159.203.88.220:3000"
 
 
+replOrientation : Css.FlexDirectionOrWrap (Css.FlexDirection {})
+replOrientation =
+    Css.row
+
+
 
 -- MAIN
 
@@ -216,7 +221,7 @@ view model =
             [ css
                 [ Css.height replHeight
                 , Css.displayFlex
-                , Css.flexDirection Css.row
+                , Css.flexDirection replOrientation
                 ]
             ]
             [ Html.Styled.span

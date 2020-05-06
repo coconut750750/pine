@@ -3,6 +3,7 @@ module Repl exposing (main)
 import Browser
 import Css exposing (..)
 import Css.Global exposing (..)
+import Dict
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
@@ -30,7 +31,7 @@ import Svg.Styled.Attributes exposing (height, viewBox, width)
 
 defaultUrl : String
 defaultUrl =
-    "http://:3000"
+    "http://159.203.88.220:3000"
 
 
 
@@ -51,26 +52,53 @@ main =
 
 
 type alias Model =
-    { prefix : String
-    , mainCode : String
-    , suffix : String
+    { prefixCode : String
+    , infixCode : String
+    , suffixCode : String
     , codeOutput : String
     , haskellInterpreter : String
     }
 
 
 init : Decode.Value -> ( Model, Cmd Msg )
-init flag =
-    ( { prefix = "let concatString :: String -> String -> String"
-      , mainCode = "    concatString str1 str2 = str1 ++ str2"
-      , suffix = "in concatString \"Hello\" \"World\""
-      , codeOutput = ""
-      , haskellInterpreter =
-            case Decode.decodeValue Decode.string flag of
-                Ok url ->
-                    url
+init flags =
+    let
+        flagsDict =
+            case Decode.decodeValue (Decode.dict Decode.string) flags of
+                Ok dict ->
+                    dict
 
                 Err _ ->
+                    Dict.empty
+    in
+    ( { codeOutput = ""
+      , prefixCode =
+            case Dict.get "prefix" flagsDict of
+                Just prefix ->
+                    prefix
+
+                Nothing ->
+                    ""
+      , infixCode =
+            case Dict.get "infix" flagsDict of
+                Just infix ->
+                    infix
+
+                Nothing ->
+                    ""
+      , suffixCode =
+            case Dict.get "suffix" flagsDict of
+                Just suffix ->
+                    suffix
+
+                Nothing ->
+                    ""
+      , haskellInterpreter =
+            case Dict.get "interpreter" flagsDict of
+                Just interpreter ->
+                    interpreter
+
+                Nothing ->
                     defaultUrl
       }
     , Cmd.none
@@ -92,12 +120,12 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         TextUpdate newcontent ->
-            ( { model | mainCode = newcontent }, Cmd.none )
+            ( { model | infixCode = newcontent }, Cmd.none )
 
         SendPost ->
             let
                 fullCode =
-                    model.prefix ++ "\n" ++ model.mainCode ++ "\n" ++ model.suffix
+                    model.prefixCode ++ "\n" ++ model.infixCode ++ "\n" ++ model.suffixCode
             in
             ( model
             , Http.post
@@ -120,7 +148,7 @@ update msg model =
                     ( { model | codeOutput = "FAILURE" }, Cmd.none )
 
         TabDown ->
-            ( { model | mainCode = model.mainCode ++ "\t" }, Cmd.none )
+            ( { model | infixCode = model.infixCode ++ "\t" }, Cmd.none )
 
 
 
@@ -193,23 +221,19 @@ view model =
             ]
             [ Html.Styled.span
                 [ css
-                    [ Css.width (Css.pct 50)
-                    , Css.float left
-                    , Css.backgroundColor theme.primary
+                    [ Css.backgroundColor theme.primary
                     , Css.overflowY hidden
                     , Css.overflowX hidden
-                    , Css.flex (Css.num 1)
+                    , Css.flex (Css.num 2)
                     ]
                 ]
-                [ hardCoded [ Css.height auto ] model.prefix
-                , mainInput [ Css.height auto ] model.mainCode
-                , hardCoded [ Css.height auto ] model.suffix
+                [ hardCoded [ Css.height auto ] model.prefixCode
+                , mainInput [ Css.height auto ] model.infixCode
+                , hardCoded [ Css.height auto ] model.suffixCode
                 ]
             , Html.Styled.span
                 [ css
-                    [ Css.width (Css.pct 50)
-                    , Css.float right
-                    , Css.backgroundColor theme.primary
+                    [ Css.backgroundColor theme.primary
                     , Css.overflowY hidden
                     , Css.flex (Css.num 1)
                     ]
@@ -318,7 +342,7 @@ hardCoded attrs code =
         , Html.Styled.Attributes.rows rows
         , css
             ([ Css.width widthSize
-             , Css.height heightSize
+             , Css.height auto
              , Css.resize Css.none
              , Css.verticalAlign top
              , border (Css.px 0)

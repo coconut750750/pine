@@ -22,7 +22,7 @@ import React from "react"
 import Layout from "../components/layout"
 
 import Elm from "react-elm-components"
-import Pine from "./../../../frontend/src/Repl.elm"
+import Pine from "../elm/Repl.elm"
 
 var flags = {
     interpreter: "http://159.203.88.220:3000/",

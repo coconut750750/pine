@@ -1,31 +1,30 @@
 # pine backend
 
-## Project Setup
+Our backend is written in Elm and uses Scotty as our web framework.
+It doesn't serve any Html pages, but instead listens to a port (:3000 by default) for
+incoming POST requests with a recognizable body of haskell code.
 
+It then uses hint, the Runtime Haskell interpreter to evaluate the code and replies with the results.
+
+## Usage
 1. Install Haskell & stack
 Installation instructions for Haskell and stack could be found here:
     www.haskell.org/downloads/
 
-2. Run `stack build` at backend root
-This should install all of the necessary Haskell dependencies
+2. Install all of the necessary Haskell dependencies
+Run `stack build` from `backend/`.
 
-3. Run `stack run` at backend root
-This runs the compiled binary created from `stack build`
+3. Start backend server 
+Run `stack run` from `backend/`. 
 
-## Project Development Setup
+## Development Setup
 
-1. Install Haskell & stack
-Installation instructions for Haskell and stack could be found here:
-    www.haskell.org/downloads/
+ - To ensure that communication between the Haskell backend and Elm frontend is consistent, we used
+a Haskell package called `elm-street` which is able to automatically generate compatible 
+types, encoders, and decoders for both programs. If you would like to change the data type, here are the steps:
 
-2. Start Development
+    1. Edit the `CodeSubmission` data type in the `backend/src/Types.hs` file 
+    2. Run `stack ghci` from `backend/` to start the interpreter
+    3. Type `:load GenerateElmTypes.hs` to load the generator function
+    4. Type `generate` to run the loaded function. This will generate type files for Elm into the `backend/GeneratedTypes` directory and these files should be moved to `frontend/src/GeneratedTypes`
 
-    #### Frontend:
-    Our frontend is written in Elm and then compiled into Html/JS. To compile, run `elm make src/Main.elm` in the `/frontend/` directory.
-    #### Backend:
-    Our backend uses Scotty as our web framework, and should automatically serve the generated index.html file
-
-3. If and when necessary, you can automatically generate Elm types from the Haskell src/Types.hs
-    1. run `stack ghci` to open the interpreter from the backend directory
-    2. type `:load GenerateElmTypes.hs` to load the generator function
-    2. type `generate` to run the loaded function. This will generate type files for Elm under "./backend/GeneratedTypes" and should be moved to "./frontend/src/GeneratedTypes"

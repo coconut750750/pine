@@ -26,15 +26,16 @@ import Svg.Styled exposing (svg)
 import Svg.Styled.Attributes exposing (height, viewBox, width)
 
 
-
--- A Droplet server running for testing
-
-
+{-| The URL of a DigitalOcean server running for test/demoing
+-}
 defaultUrl : String
 defaultUrl =
     "http://159.203.88.220:3000"
 
 
+{-| Change this to Css.column if you want the output window to go below the input,
+rather than having it next to the input.
+-}
 replOrientation : Css.FlexDirectionOrWrap (Css.FlexDirection {})
 replOrientation =
     Css.row
@@ -61,12 +62,14 @@ type alias Model =
     { prefixCode : String
     , infixCode : String
     , suffixCode : String
-    , codeOutput : String
     , haskellInterpreter : String
     , outputLines : List String
     }
 
 
+{-| This initializes our Repl's model. It decodes any flags passed in as a dictionary, and
+sets corresponding model values to either the input or default.
+-}
 init : Decode.Value -> ( Model, Cmd Msg )
 init flags =
     let
@@ -78,8 +81,7 @@ init flags =
                 Err _ ->
                     Dict.empty
     in
-    ( { codeOutput = ""
-      , prefixCode =
+    ( { prefixCode =
             case Dict.get "prefix" flagsDict of
                 Just prefix ->
                     prefix
@@ -150,10 +152,10 @@ update msg model =
         GotReply result ->
             case result of
                 Ok fullText ->
-                    ( { model | codeOutput = unescape fullText, outputLines = String.split "\\n" (unescape fullText) }, Cmd.none )
+                    ( { model | outputLines = String.split "\\n" (unescape fullText) }, Cmd.none )
 
                 Err err ->
-                    ( { model | codeOutput = stringFromError err }, Cmd.none )
+                    ( { model | outputLines = [ stringFromError err ] }, Cmd.none )
 
         TabDown event ->
             let

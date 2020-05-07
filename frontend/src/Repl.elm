@@ -14,7 +14,7 @@ import GeneratedTypes.Encoder exposing (encodeCodeSubmission)
 import GeneratedTypes.Types exposing (CodeSubmission)
 import Html exposing (Html, div, input, text, textarea)
 import Html.Attributes exposing (style)
-import Html.Events exposing (on, onClick, onInput, preventDefaultOn)
+import Html.Events exposing (custom, on, onClick, onInput, preventDefaultOn)
 import Html.Styled
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events
@@ -118,7 +118,7 @@ type Msg
     = TextUpdate String
     | SendPost
     | GotReply (Result Http.Error String)
-    | TabDown
+    | TabDown Decode.Value
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -152,8 +152,46 @@ update msg model =
                 Err _ ->
                     ( { model | codeOutput = "FAILURE" }, Cmd.none )
 
-        TabDown ->
-            ( { model | infixCode = model.infixCode ++ "\t" }, Cmd.none )
+        TabDown event ->
+            let
+                ( start, end ) =
+                    getSelectionRange event
+
+                left =
+                    String.left start model.infixCode
+
+                right =
+                    String.dropLeft end model.infixCode
+            in
+            if start == end then
+                ( { model | infixCode = left ++ "    " ++ right }, Cmd.none )
+
+            else
+                ( { model | infixCode = "    " ++ model.infixCode }, Cmd.none )
+
+
+{-| Decode a keyDown event Value to extract the event.target.selectionStart and selectionEnd properties
+-}
+getSelectionRange : Decode.Value -> ( Int, Int )
+getSelectionRange event =
+    let
+        startIdx =
+            case Decode.decodeValue (Decode.maybe (Decode.at [ "target", "selectionStart" ] Decode.int)) event of
+                Ok (Just selectionStart) ->
+                    selectionStart
+
+                _ ->
+                    0
+
+        endIdx =
+            case Decode.decodeValue (Decode.maybe (Decode.at [ "target", "selectionEnd" ] Decode.int)) event of
+                Ok (Just selectionEnd) ->
+                    selectionEnd
+
+                _ ->
+                    0
+    in
+    ( startIdx, endIdx )
 
 
 
@@ -192,7 +230,14 @@ view model =
         replHeight =
             Css.pct 100
     in
-    Html.Styled.div [ css [ Css.height (Css.pct 100), Css.width (Css.pct 100), Css.displayFlex, Css.flexDirection Css.column ] ]
+    Html.Styled.div
+        [ css
+            [ Css.height (Css.pct 100)
+            , Css.width (Css.pct 100)
+            , Css.displayFlex
+            , Css.flexDirection Css.column
+            ]
+        ]
         [ global
             [ class "repl"
                 [ fontFamily monospace
@@ -232,9 +277,9 @@ view model =
                     , Css.flex (Css.num 2)
                     ]
                 ]
-                [ hardCoded [ Css.height auto ] model.prefixCode
+                [ readOnly [ Css.height auto ] model.prefixCode
                 , mainInput [ Css.height auto ] model.infixCode
-                , hardCoded [ Css.height auto ] model.suffixCode
+                , readOnly [ Css.height auto ] model.suffixCode
                 ]
             , Html.Styled.span
                 [ css
@@ -248,6 +293,8 @@ view model =
         ]
 
 
+{-| The top header of the REPL that contains the "Run" button
+-}
 mainHeader : List Css.Style -> Html.Styled.Html Msg
 mainHeader attrs =
     let
@@ -292,6 +339,8 @@ mainHeader attrs =
         ]
 
 
+{-| SVG play icon for the "Run" button
+-}
 playButton : List Css.Style -> Html.Styled.Html Msg
 playButton attrs =
     let
@@ -313,8 +362,10 @@ playButton attrs =
         ]
 
 
-getHardcodeDisplay : String -> Css.Style
-getHardcodeDisplay code =
+{-| Helper function to remove the readOnly displays when they don't have code to present.
+-}
+getReadonlyDisplay : String -> Css.Style
+getReadonlyDisplay code =
     if String.length code == 0 then
         Css.display Css.none
 
@@ -322,8 +373,10 @@ getHardcodeDisplay code =
         Css.display Css.block
 
 
-hardCoded : List Css.Style -> String -> Html.Styled.Html Msg
-hardCoded attrs code =
+{-| The read-only panels in the REPL with prepared code
+-}
+readOnly : List Css.Style -> String -> Html.Styled.Html Msg
+readOnly attrs code =
     let
         borderSize =
             Css.px 0.125
@@ -338,7 +391,7 @@ hardCoded attrs code =
             List.length (String.lines code)
 
         displayStyle =
-            getHardcodeDisplay code
+            getReadonlyDisplay code
     in
     Html.Styled.textarea
         [ Html.Styled.Attributes.value code
@@ -359,6 +412,8 @@ hardCoded attrs code =
         []
 
 
+{-| The input panel in the REPL
+-}
 mainInput : List Css.Style -> String -> Html.Styled.Html Msg
 mainInput attrs code =
     let
@@ -399,22 +454,28 @@ mainInput attrs code =
         []
 
 
-onTab : msg -> Html.Styled.Attribute msg
-onTab msg =
+{-| Html attribute to listen for keyDown events and emit the given Msg if tab is pressed
+-}
+onTab : (Decode.Value -> msg) -> Html.Styled.Attribute msg
+onTab toMsg =
     let
         isTabKey keyCode =
             if keyCode == 9 then
-                Decode.succeed msg
+                Decode.value
 
             else
                 Decode.fail "It's not a tab key :)"
     in
     Html.Events.keyCode
         |> Decode.andThen isTabKey
+        |> Decode.map toMsg
         |> Decode.map (\x -> { message = x, stopPropagation = True, preventDefault = True })
-        |> Html.Styled.Events.custom "keydown"
+        |> custom "keydown"
+        |> Html.Styled.Attributes.fromUnstyled
 
 
+{-| The panel in the REPL that shows the haskell output
+-}
 mainOutput : List Css.Style -> String -> Html.Styled.Html Msg
 mainOutput attrs output =
     let

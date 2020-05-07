@@ -200,10 +200,10 @@ unescape rawString =
 toInt2 match =
     case String.toInt (String.dropLeft 1 match) of
         Just charCode ->
-            Debug.log "charCode: " charCode
+            charCode
 
         Nothing ->
-            Debug.log "nothing." -1
+            -1
 
 
 {-| Convert Http.Error into a printable string to show the user

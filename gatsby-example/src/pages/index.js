@@ -48,16 +48,51 @@ var flags4 = {
 
 var flags5 = {
     interpreter: interpreterServer,
-    prefix: ``,
-    infix:  `map ($ 3) [(4+), (10*), (^2), sqrt]`,
+    prefix: 
+`let
+    getPage num  
+        | num <= 0 = "There are no negative pages!"  
+        | num <= 1 = "Once upon a time, there were guards."  
+        | num <= 2 = "The end!"  
+        | otherwise = "It's only a two page book!"  
+in`,
+    infix:  `getPage 1`,
     suffix: ``,
 }
 
 var flags6 = {
     interpreter: interpreterServer,
     prefix: ``,
+    infix:  `map ($ 3) [(4+), (10*), (^2), sqrt]`,
+    suffix: ``,
+}
+
+var flags7 = {
+    interpreter: interpreterServer,
+    prefix: ``,
     infix:  `[1..]`,
     suffix: ``,
+}
+
+var flags8 = {
+    interpreter: interpreterServer,
+    prefix: ``,
+    infix:  `(*) <$> [1,2,3] <*> ([3,4,5] >>= \\x -> [x,-x])`,
+    suffix: ``,
+}
+
+var flags9 = {
+    interpreter: interpreterServer,
+    prefix: 
+`let 
+    describeList xs = "The list is " ++ what xs  
+        where what [] = "empty."  
+              what [x] = "a singleton list."  
+              what [x, y] = "a 2-tuple list."  
+              what xs = "a longer list."`,
+    infix:  
+`    myList = [1]`,
+    suffix: `in describeList myList`,
 }
 
 const IndexPage = () => (
@@ -65,6 +100,7 @@ const IndexPage = () => (
     <SEO title="Home" />
     <h1>React component REPL demonstration!</h1>
     <p>Welcome! This has come a long way, and hopefully nothing breaks during this demonstration :)</p>
+    <p>Many of these examples were inspired by or directly from <a href="http://learnyouahaskell.com/">learnyouahaskell.com</a></p>
     <br/>
     <h3>Let&apos;s start simple</h3>
     <Elm src={ Pine.Elm.Repl } flags={ flags1 }todos/>
@@ -72,6 +108,10 @@ const IndexPage = () => (
     <br/>
     <h3>String Concatenation</h3>
     <Elm src={ Pine.Elm.Repl } flags={ flags2 }todos/>
+    <br/>
+    <br/>
+    <h3>This won&apos;t work, but it also won&apos;t crash the server!</h3>
+    <Elm src={ Pine.Elm.Repl } flags={ flags7 }todos/>
     <br/>
     <br/>
     <h3>Multiline expressions too!</h3>
@@ -82,12 +122,21 @@ const IndexPage = () => (
     <Elm src={ Pine.Elm.Repl } flags={ flags4 }todos/>
     <br/>
     <br/>
-    <h3>Astounding Applicatives</h3>
+    <h3>Guards!</h3>
     <Elm src={ Pine.Elm.Repl } flags={ flags5 }todos/>
     <br/>
     <br/>
-    <h3>This won&apos;t work, but it also won&apos;t crash the server!</h3>
+    <h3>Astounding Applicatives</h3>
     <Elm src={ Pine.Elm.Repl } flags={ flags6 }todos/>
+    <br/>
+    <br/>
+    <h3>Multitudes of Monads</h3>
+    <Elm src={ Pine.Elm.Repl } flags={ flags8 }todos/>
+    <br/>
+    <br/>
+    <h3>Lastly, pattern matching</h3>
+    <Elm src={ Pine.Elm.Repl } flags={ flags9 }todos/>
+    <br/>
   </Layout>
 )
 

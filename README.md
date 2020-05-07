@@ -5,17 +5,19 @@
 1. In your project folder, create a `src/elm` directory
 
 2. Copy over the files in this `frontend/src` directory into your project's `src/elm` directory.
- - Your project should now have an `src/elm/Repl.elm` file
+    - Your project should now have an `src/elm/Repl.elm` file
 
 3. From this repo's `frontend/` directory, copy over `elm.json` into your root
 
-4. Set up gatsby to compile and run `.elm` files by running:
- - `yarn add react-elm-components gatsby-plugin-elm`
- - `yarn add elm-webpack-loader -D`
- - Add `gatsby-plugin-elm` to gatsby-config.js plugins
+4. In your `elm.json` file, make sure that `"source-directories"` includes your "`src/elm`" directory.
 
-5. That's it! `gatsby-example/src/pages/index.js` has several examples on how to use the react component, but for a quick tldr:
-```
+5. Set up gatsby to compile and run `.elm` files by running:
+    - `yarn add react-elm-components gatsby-plugin-elm`
+    - `yarn add elm-webpack-loader -D`
+    - Add `gatsby-plugin-elm` to gatsby-config.js plugins
+
+6. That's it! `gatsby-example/src/pages/index.js` has several examples on how to use the react component, but for a quick tldr:
+```javascript
 import React from "react"
 import Layout from "../components/layout"
 

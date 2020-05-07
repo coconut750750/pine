@@ -1,5 +1,45 @@
 # pine
 
+## Using the react component
+
+1. In your project folder, create a `src/elm` directory
+
+2. Copy over the files in this `frontend/src` directory into your project's `src/elm` directory.
+ - Your project should now have an `src/elm/Repl.elm` file
+
+3. From this repo's `frontend/` directory, copy over `elm.json` into your root
+
+4. Set up gatsby to compile and run `.elm` files by running:
+ - `yarn add react-elm-components gatsby-plugin-elm`
+ - `yarn add elm-webpack-loader -D`
+ - Add `gatsby-plugin-elm` to gatsby-config.js plugins
+
+5. That's it! `gatsby-example/src/pages/index.js` has several examples on how to use the react component, but for a quick tldr:
+```
+import React from "react"
+import Layout from "../components/layout"
+
+import Elm from "react-elm-components"
+import Pine from "./../../../frontend/src/Repl.elm"
+
+var flags = {
+    interpreter: "http://159.203.88.220:3000/",
+    prefix:      "",
+    infix:       "1 + 2",
+    suffix:      "",
+}
+
+const IndexPage = () => (
+  <Layout>
+    <Elm src={ Pine.Elm.Repl } flags={ flags }/>
+  </Layout>
+)
+
+
+export default ReplPage
+```
+ - The `interpreter` flag is the haskell backend's IP address. The IP shown is a Digital Ocean droplet that's being borrowed for the time being.
+
 ## Project Setup
 
 1. Install Haskell & stack

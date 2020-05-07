@@ -21,6 +21,7 @@ import Html.Styled.Events
 import Http exposing (stringBody)
 import Json.Decode as Decode
 import Json.Encode
+import Regex
 import Svg.Styled exposing (svg)
 import Svg.Styled.Attributes exposing (height, viewBox, width)
 
@@ -62,6 +63,7 @@ type alias Model =
     , suffixCode : String
     , codeOutput : String
     , haskellInterpreter : String
+    , outputLines : List String
     }
 
 
@@ -105,6 +107,7 @@ init flags =
 
                 Nothing ->
                     defaultUrl
+      , outputLines = []
       }
     , Cmd.none
     )
@@ -147,10 +150,10 @@ update msg model =
         GotReply result ->
             case result of
                 Ok fullText ->
-                    ( { model | codeOutput = fullText }, Cmd.none )
+                    ( { model | codeOutput = unescape fullText, outputLines = String.split "\\n" (unescape fullText) }, Cmd.none )
 
-                Err _ ->
-                    ( { model | codeOutput = "FAILURE" }, Cmd.none )
+                Err err ->
+                    ( { model | codeOutput = stringFromError err }, Cmd.none )
 
         TabDown event ->
             let
@@ -168,6 +171,60 @@ update msg model =
 
             else
                 ( { model | infixCode = "    " ++ model.infixCode }, Cmd.none )
+
+
+{-| The response from the haskell server has some escaped unicode characters.
+An example response might be:
+
+    WontCompile [ GhcError { errMsg = "<hint>:5:22: error: parse error on input \\8216;\\8217" } ]
+
+(Actual response has single backslashes, but the Elm formatter keeps forces double backslashes)
+
+However, the string we want to show the user wouldn't have the escaped Unicode character codes.
+
+    WontCompile [ GhcError { errMsg = "<hint>:5:22: error: parse error on input ‘;’" } ]
+
+And this function 'unescapes' the characters from the first string to the second.
+
+-}
+unescape : String -> String
+unescape rawString =
+    case Regex.fromString "\\\\\\d\\d\\d\\d" of
+        Nothing ->
+            rawString
+
+        Just regex ->
+            Regex.replace regex (.match >> toInt2 >> Char.fromCode >> String.fromChar) rawString
+
+
+toInt2 match =
+    case String.toInt (String.dropLeft 1 match) of
+        Just charCode ->
+            Debug.log "charCode: " charCode
+
+        Nothing ->
+            Debug.log "nothing." -1
+
+
+{-| Convert Http.Error into a printable string to show the user
+-}
+stringFromError : Http.Error -> String
+stringFromError err =
+    case err of
+        Http.BadUrl url ->
+            "Bad url: " ++ url
+
+        Http.Timeout ->
+            "Timed out waiting for server response"
+
+        Http.NetworkError ->
+            "Network Error"
+
+        Http.BadStatus statusCode ->
+            "Returned bad status code: " ++ String.fromInt statusCode
+
+        Http.BadBody errString ->
+            errString
 
 
 {-| Decode a keyDown event Value to extract the event.target.selectionStart and selectionEnd properties
@@ -288,7 +345,7 @@ view model =
                     , Css.flex (Css.num 1)
                     ]
                 ]
-                [ mainOutput [] model.codeOutput ]
+                (mainOutput [] model.outputLines)
             ]
         ]
 
@@ -476,8 +533,13 @@ onTab toMsg =
 
 {-| The panel in the REPL that shows the haskell output
 -}
-mainOutput : List Css.Style -> String -> Html.Styled.Html Msg
-mainOutput attrs output =
+mainOutput : List Css.Style -> List String -> List (Html.Styled.Html Msg)
+mainOutput attrs lineStrings =
+    List.map (htmlFromLine attrs) lineStrings
+
+
+htmlFromLine : List Css.Style -> String -> Html.Styled.Html Msg
+htmlFromLine attrs line =
     let
         borderSize =
             Css.px 0.125
@@ -486,17 +548,16 @@ mainOutput attrs output =
             Css.pct 100
 
         heightSize =
-            Css.pct 100
+            Css.auto
     in
     Html.Styled.p
         [ Html.Styled.Attributes.classList [ ( "repl", True ) ]
         , css
             ([ Css.width widthSize
-             , Css.height heightSize
              , border (Css.px 0)
              , borderLeft3 borderSize Css.solid theme.border
              ]
                 ++ attrs
             )
         ]
-        [ Html.Styled.text output ]
+        [ Html.Styled.text line ]
